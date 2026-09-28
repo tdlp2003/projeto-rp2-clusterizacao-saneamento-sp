@@ -5,4 +5,6 @@ xlrd>=2.0.1      # necessário para ler os .xls originais do SNIS-AE 2019
 scikit-learn
 scipy
 matplotlib
-seaborn
+seaborn>=0.13
+tabulate
+pytest
