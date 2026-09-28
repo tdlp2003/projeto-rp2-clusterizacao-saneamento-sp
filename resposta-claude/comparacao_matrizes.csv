@@ -1,0 +1,8 @@
+﻿matriz,variáveis,k,completos_2019,completos_2024,completos_ambos
+A2,atend. água + atend. esgoto,2,628,618,607
+C (reduzida),"atend. água, atend. esgoto, perdas",3,628,618,607
+A3b,"atend. água, atend. esgoto, trat. esgoto",3,628,618,607
+A4 (recomendada),"atend. água, perdas, atend. esgoto, trat. esgoto",4,628,618,607
+B-cob,A3 + cobertura RS (IN015/IRS0001),4,551,599,521
+B5,A3 + cobertura RS + massa RS (IN028/IRS1004),5,551,599,521
+B6,A4 + cobertura RS + massa RS,6,551,599,521

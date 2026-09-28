@@ -1,0 +1,12 @@
+﻿Indicador,cod_2019,cod_2024,Total_SP,2019_N,2019_%,2024_N,2024_%,Ambos_N,Ambos_%,Spearman_2019x2024
+Água — atendimento total,IN055,IAG0001,645,628,97.4,626,97.1,614,95.2,0.63
+Água — perdas na distribuição,IN049,IAG2013,645,628,97.4,629,97.5,617,95.7,0.481
+Água — atendimento urbano,IN023,IAG0002,645,628,97.4,626,97.1,614,95.2,0.32
+Esgoto — atendimento total,IN056,IES0001,645,628,97.4,618,95.8,607,94.1,0.747
+Esgoto — tratamento do coletado,IN016(AE),IES2004,645,628,97.4,621,96.3,610,94.6,0.668
+Esgoto — tratado / água consumida,IN046,IES2003,645,625,96.9,621,96.3,607,94.1,0.626
+Resíduos — cobertura coleta (total),IN015(RS),IRS0001,645,556,86.2,616,95.5,537,83.3,0.354
+Resíduos — cobertura coleta (urbana),IN016(RS),IRS0002,645,556,86.2,616,95.5,537,83.3,0.094
+Resíduos — massa RDO+RPU per capita,IN028(RS),IRS1004,645,556,86.2,616,95.5,537,83.3,0.178
+Resíduos — massa RDO per capita (atendida),IN022(RS),IRS1005,645,213,33.0,616,95.5,207,32.1,0.243
+Resíduos — coleta seletiva porta a porta,IN030(RS),IRS0006,645,299,46.4,616,95.5,289,44.8,0.258
