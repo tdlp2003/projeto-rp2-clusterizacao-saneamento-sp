@@ -1,0 +1,186 @@
+﻿codigo,nome,unidade,fonte
+IN003,Incidência de despesas com RSU na prefeitura,%,SNIS-RS 2019
+IN026,Relação: quantidade RCD coletada pela Pref. p/quant. total  [RDO+RPU],%,SNIS-RS 2019
+IN027,Relação: quantidades coletadas de RPU por RDO,%,SNIS-RS 2019
+IN004,Incidência de despesas com  empresas contratadas,%,SNIS-RS 2019
+IN005,Auto-suficiência  financeira,%,SNIS-RS 2019
+IN006,Despesas per capita com RSU,R$/habitante,SNIS-RS 2019
+IN012,Indicador de desempenho financeiro,percentual,SNIS-AE 2019
+IN029,Massa de RCD per capita/ano em relação à pop. urbana,Kg/(hab.x ano),SNIS-RS 2019
+IN007,incidência de  empregados próprios,%,SNIS-RS 2019
+IN008,Incidência de empreg. de empr. contrat. no total de empreg. no manejo,%,SNIS-RS 2019
+IN030,Taxa de cobertura da col. Seletiva porta-a-porta em relação a pop. Urbana,%,SNIS-RS 2019
+IN031,Taxa de recuperação de recicláveis em relação à quantidade de RDO e RPU,%,SNIS-RS 2019
+IN032,Massa recuperada per capita,Kg/(hab. x ano),SNIS-RS 2019
+IN033,Margem do serviço da divida,percentual,SNIS-AE 2019
+IN034,Incid. de papel/papelão sobre total mat. recuperado,%,SNIS-RS 2019
+IN035,Incid. de plásticos sobre total material recuperado,%,SNIS-RS 2019
+IN036,Massa de RSS coletada per capita,Kg/(1000hab.  X dia),SNIS-RS 2019
+IN037,Taxa de RSS sobre [RDO+RPU],%,SNIS-RS 2019
+IN038,Incid.de metais sobre total material recuperado,%,SNIS-RS 2019
+IN039,Incid.de vidros sobre total de material recuperado,%,SNIS-RS 2019
+IN040,Incidência de ''outros'' sobre total material recuperado,%,SNIS-RS 2019
+IN041,Taxa de terceirização de varredores,%,SNIS-RS 2019
+IN042,Taxa de terceirização de varrição,%,SNIS-RS 2019
+IN054,Massa per capita recolhida via coleta seletiva,Kg/(hab. x ano),SNIS-RS 2019
+IN018,Produtividades média de coletadores e motorista,Kg/empregado  x dia,SNIS-RS 2019
+IN019,Taxa de motoristas e coletadores por habitante urbano,empreg./1000hab.,SNIS-RS 2019
+IN102,Índice de produtividade de pessoal total (equivalente),ligações/empreg.,SNIS-AE 2019
+IN048,Extensão total anual varrida per capita,Km/(hab. x ano),SNIS-RS 2019
+IN002,Despesa por empregado,R$/empregado,SNIS-RS 2019
+IN045,Taxa de varredores por habitante urbano,empreg./1000hab.,SNIS-RS 2019
+IN101,Índice de suficiência de caixa,percentual,SNIS-AE 2019
+IN060,Índice de despesas por consumo de energia elétrica nos sistemas de água e esgotos,R$/ kWh,SNIS-AE 2019
+IN055,Índice de atendimento total de água,percentual,SNIS-AE 2019
+IN023,Custo unitário da coleta,R$/tonelada,SNIS-RS 2019
+IN001,Taxa de empregados por habitante urbano,empreg./1000hab.,SNIS-RS 2019
+IN043,Custo unitário da varrição,R$/km,SNIS-RS 2019
+IN011,Receita arrecadada per capita com serviços de manejo,R$/habitante,SNIS-RS 2019
+IN009,Índice de hidrometração,percentual,SNIS-AE 2019
+IN010,Incidência de empreg. admin. no total de empreg no manejo,%,SNIS-RS 2019
+IN044,Produtividade média do varredores,km/(empreg x dia),SNIS-RS 2019
+IN057,Índice de fluoretação de água,percentual,SNIS-AE 2019
+IN052,Relação de capinadores no total de empregados no manejo,%,SNIS-RS 2019
+IN025,Incidência de emprega.da coleta no total de empregados no manejo,%,SNIS-RS 2019
+IN053,Relação entre quantidades da coleta seletiva e RDO,%,SNIS-RS 2019
+IN014,Tx. cobertura de coleta direta RDO relativo à pop. urbana,%,SNIS-RS 2019
+IN017,Taxa de terceirização da coleta,%,SNIS-RS 2019
+IN022,Massa RDO coletada per capita em relação à pop. total atendida,Kg/(hab.x dia),SNIS-RS 2019
+IN058,Índice de consumo de energia elétrica em sistemas de abastecimento de água,kWh/m3,SNIS-AE 2019
+IN020,Extensão da rede de água por ligação,m/lig.,SNIS-AE 2019
+IN028,Massa [RDO+RPU] coletada per capita em relação à população total atendida,Kg/(hab.x dia),SNIS-RS 2019
+IN013,Índice de perdas faturamento,percentual,SNIS-AE 2019
+IN049,Índice de perdas na distribuição,percentual,SNIS-AE 2019
+IN050,Índice bruto de perdas lineares,m³/dia/km,SNIS-AE 2019
+IN051,Taxa de capinadores por habitante urbano,empreg./1000hab.,SNIS-RS 2019
+IN056,Índice de atendimento total de esgoto referido aos municípios atendidos com água,percentual,SNIS-AE 2019
+IN024,Incidência do custo da coleta no custo total do manejo,%,SNIS-RS 2019
+IN047,Incidência de varredores no total de empregados no manejo,%,SNIS-RS 2019
+IN015,Tx cobertura da coleta RDO em relação à pop. total,%,SNIS-RS 2019
+IN016,Tx cobertura da coleta RDO em relação à pop. urbana,%,SNIS-RS 2019
+IN046,Incidência do custo da varrição no custo total do manejo,%,SNIS-RS 2019
+IN021,Massa [RDO+RPU] coletada per capita em relação à pop. urbana,Kg/(hab.x dia),SNIS-RS 2019
+IN059,Índice de consumo de energia elétrica em sistemas de esgotamento sanitário,kWh/m³,SNIS-AE 2019
+IN071,Economias atingidas por paralisações,econ./paralis.,SNIS-AE 2019
+IN072,Duração média das paralisações,horas/paralis.,SNIS-AE 2019
+IN073,Economias atingidas por intermitências,econ./interrup.,SNIS-AE 2019
+IN074,Duração média das intermitências,horas/interrup.,SNIS-AE 2019
+IN077,Duração média dos reparos de extravasamentos de esgotos,horas/extrav.,SNIS-AE 2019
+IN082,Extravasamentos de esgotos por extensão de rede,extrav./km,SNIS-AE 2019
+IN083,Duração média dos serviços executados,hora/serviço,SNIS-AE 2019
+IN079,Índice de conformidade da quantidade de amostra - Cloro Residual,percentual,SNIS-AE 2019
+IN075,Incidência das análises de cloro residual fora do padrão,percentual,SNIS-AE 2019
+IN080,Índice de conformidade da quantidade de amostra - Turbidez,percentual,SNIS-AE 2019
+IN076,Incidência das análises de turbidez fora do padrão,percentual,SNIS-AE 2019
+IN085,Índice de conformidade da quantidade de amostra - Coliformes Totais,percentual,SNIS-AE 2019
+IN084,Incidência das análises de coliformes totais fora do padrão,percentual,SNIS-AE 2019
+IN061,Liquidez corrente,-,SNIS-AE 2019
+IN062,Liquidez geral,-,SNIS-AE 2019
+IN063,Grau de endividamento,-,SNIS-AE 2019
+IN064,Margem operacional com depreciação,percentual,SNIS-AE 2019
+IN068,Margem operacional sem depreciação,percentual,SNIS-AE 2019
+IN065,Margem líquida com depreciação,percentual,SNIS-AE 2019
+IN069,Margem líquida sem depreciação,percentual,SNIS-AE 2019
+IN066,Retorno sobre o patrimônio líquido,percentual,SNIS-AE 2019
+IN067,Composição de exigibilidades,percentual,SNIS-AE 2019
+IAG0001,Atendimento da população total com rede de abastecimento de água,Percentual,SINISA 2024 (água)
+IAG0002,Atendimento da população urbana com rede de abastecimento de água,Percentual,SINISA 2024 (água)
+IAG0003,Atendimento da população rural com rede de abastecimento de água,Percentual,SINISA 2024 (água)
+IAG0004,Atendimento dos domicílios totais com rede de abastecimento de água,Percentual,SINISA 2024 (água)
+IAG0005,Atendimento dos domicílios urbanos com rede de abastecimento de água,Percentual,SINISA 2024 (água)
+IAG0006,Atendimento dos domicílios rurais com rede de abastecimento de água,Percentual,SINISA 2024 (água)
+IAG1001,Extensão de rede de distribuição de água por ligação,m/ligação,SINISA 2024 (água)
+IAG1002,Densidade de economias de água por ligação,econ./ligação,SINISA 2024 (água)
+IAG1003,Incidência da hidrometração de água,Percentual,SINISA 2024 (água)
+IAG1004,Incidência das economias residenciais ativas de água,Percentual,SINISA 2024 (água)
+IAG2001,Micromedição de água em relação ao volume disponibilizado para distribuição,Percentual,SINISA 2024 (água)
+IAG2002,Micromedição do volume de água consumido,Percentual,SINISA 2024 (água)
+IAG2003,Macromedição do volume de água de entrada no sistema de distribuição,Percentual,SINISA 2024 (água)
+IAG2004,Consumo micromedido de água por economia,m³/economia/mês,SINISA 2024 (água)
+IAG2005,Consumo de água faturado por economia,m³/economia/mês,SINISA 2024 (água)
+IAG2006,Consumo total médio per capita de água,l/hab/dia,SINISA 2024 (água)
+IAG2007,Consumo residencial médio per capita de água,l/hab/dia,SINISA 2024 (água)
+IAG2008,Volume de água disponibilizado para distribuição por economia,m³/economia/mês,SINISA 2024 (água)
+IAG2009,Consumo total médio de água por economia,m³/economia/mês,SINISA 2024 (água)
+IAG2010,Consumo de água em relação ao volume disponibilizado para distribuição,Percentual,SINISA 2024 (água)
+IAG2011,Volume faturado de água em relação ao volume de entrada no sistema de distribuição,Percentual,SINISA 2024 (água)
+IAG2012,Perdas de faturamento de água,Percentual,SINISA 2024 (água)
+IAG2013,Perdas totais de água na distribuição,Percentual,SINISA 2024 (água)
+IAG2014,Perdas totais lineares de água na rede de distribuição,m³/km/dia,SINISA 2024 (água)
+IAG2015,Perdas totais de água por ligação,l/lig/dia,SINISA 2024 (água)
+IAG2016,Incidência de ligações de água setorizadas,Percentual,SINISA 2024 (água)
+IAG2023,Consumo médio de energia elétrica no serviço de abastecimento de água,KWh/m³,SINISA 2024 (água)
+IAG3001,Economias ativas de água atingidas por paralisações,economias/paralisação,SINISA 2024 (água)
+IAG3002,Economias ativas de água atingidas por interrupções sistemáticas,economias/interrupção sistemática,SINISA 2024 (água)
+IAG3003,Tempo médio de reparo de vazamentos de água,horas/reparo,SINISA 2024 (água)
+IAG3004,Duração média das paralisações,horas/paralisação,SINISA 2024 (água)
+IAG3005,Duração média das interrupções sistemáticas,horas/interrupção sistemática,SINISA 2024 (água)
+IAG3006,Incidência de pedidos de ligações de água executados,Percentual,SINISA 2024 (água)
+IAG3007,Incidência de economias atingidas por intermitências,Percentual,SINISA 2024 (água)
+IAG3008,Reclamações de falta de água e vazamentos água por economia,Percentual,SINISA 2024 (água)
+IES0001,Atendimento da população total com rede coletora de esgoto,Percentual,SINISA 2024 (esgoto)
+IES0002,Atendimento da população urbana com rede coletora de esgoto,Percentual,SINISA 2024 (esgoto)
+IES0003,Atendimento da população rural com rede coletora de esgoto,Percentual,SINISA 2024 (esgoto)
+IES0004,Atendimento dos domicílios totais com rede coletora de esgoto,Percentual,SINISA 2024 (esgoto)
+IES0005,Atendimento dos domicílios urbanos com rede coletora de esgoto,Percentual,SINISA 2024 (esgoto)
+IES0006,Atendimento dos domicílios rurais com rede coletora de esgoto,Percentual,SINISA 2024 (esgoto)
+IES0007,Atendimento dos domicílios totais com coleta e tratamento de esgoto,Percentual,SINISA 2024 (esgoto)
+IES0008,Atendimento dos domicílios urbanos com coleta e tratamento de esgoto,Percentual,SINISA 2024 (esgoto)
+IES0009,Atendimento dos domicílios rurais com coleta e tratamento de esgoto,Percentual,SINISA 2024 (esgoto)
+IES1001,Extensão de rede de esgoto por ligação,m/ligação,SINISA 2024 (esgoto)
+IES1002,Densidade de economias de esgoto por ligação,econ./ligação,SINISA 2024 (esgoto)
+IES1003,Incidência das economias residenciais ativas com coleta de esgoto,Percentual,SINISA 2024 (esgoto)
+IES1004,Incidência das economias residenciais ativas com tratamento de esgoto,Percentual,SINISA 2024 (esgoto)
+IES2002,Esgoto coletado referido à água consumida,Percentual,SINISA 2024 (esgoto)
+IES2003,Esgoto tratado referido à água consumida,Percentual,SINISA 2024 (esgoto)
+IES2004,Esgoto tratado referido ao esgoto coletado,Percentual,SINISA 2024 (esgoto)
+IES2005,Consumo médio de energia elétrica no serviço de esgotamento sanitário,KWh/m³,SINISA 2024 (esgoto)
+IES3001,Extravasamentos de esgoto reparados por extensão de rede,extravasamentos/km,SINISA 2024 (esgoto)
+IES3002,Tempo médio para reparo de extravasamentos de esgoto,horas/reparo,SINISA 2024 (esgoto)
+IES3003,Extravasamentos de esgoto reparados por reclamação,extravasamentos/reclamação,SINISA 2024 (esgoto)
+IFR0001,Produtividade de pessoal do serviço de limpeza urbana,Indicadores Administrativos,SINISA 2024 (resíduos)
+IFR0002,Produtividade de pessoal do serviço de manejo de resíduos sólidos,,SINISA 2024 (resíduos)
+IFR0003,Participação do pessoal próprio no total de pessoal dos serviços de limpeza urbana e manejo de resíduos sólidos,,SINISA 2024 (resíduos)
+IFR0004,Participação do pessoal terceirizado no total de pessoal dos serviços de limpeza urbana e manejo de resíduos sólidos,,SINISA 2024 (resíduos)
+IFR0005,Catadores organizados no serviço de tratamento de resíduos sólidos recicláveis secos,,SINISA 2024 (resíduos)
+IFR0006,Quantidade média de catadores organizados por associação ou cooperativa,,SINISA 2024 (resíduos)
+IFR1001,Receita operacional média do serviço de manejo de resíduos sólidos por domicílio,Indicadores Receita e Cobrança,SINISA 2024 (resíduos)
+IFR1002,Receita operacional média do serviço de manejo de resíduos sólidos por habitante,,SINISA 2024 (resíduos)
+IFR1003,Participação da receita operacional direta na receita operacional total do serviço de manejo de resíduos sólidos,,SINISA 2024 (resíduos)
+IFR1004,Participação da receita operacional indireta na receita operacional total do serviço de manejo de resíduos sólidos,,SINISA 2024 (resíduos)
+IFR1005,Evasão de receitas do serviço de manejo de resíduos sólidos,,SINISA 2024 (resíduos)
+IFR1006,Suficiência de caixa para despesas de exploração (DEX) com os serviços de manejo de resíduos sólidos,,SINISA 2024 (resíduos)
+IFR2001,Despesa de exploração média do serviço de manejo de resíduos sólidos por domicílio,Indicadores de Despesas,SINISA 2024 (resíduos)
+IFR2002,Despesa de exploração média do serviço de manejo de resíduos sólidos por habitante,,SINISA 2024 (resíduos)
+IFR2003,Despesa de exploração média do serviço de limpeza urbana por habitante,,SINISA 2024 (resíduos)
+IFR2004,Despesa média com pessoal próprio dos serviços de limpeza urbana,,SINISA 2024 (resíduos)
+IFR2005,Despesa média com pessoal próprio do serviço de manejo de resíduos sólidos,,SINISA 2024 (resíduos)
+IFR2006,Margem da despesa de exploração do serviço de manejo de resíduos sólidos,,SINISA 2024 (resíduos)
+IFR2007,Margem da despesa com pessoal próprio do serviço de manejo de resíduos sólidos,,SINISA 2024 (resíduos)
+IFR2008,Incidência da despesa com pessoal próprio na despesa de exploração dos serviços de limpeza urbana e manejo de resíduos sólidos,,SINISA 2024 (resíduos)
+IFR2009,Incidência da despesa com serviço terceirizado na despesa de exploração dos serviços de limpeza urbana e manejo de resíduos sólidos,,SINISA 2024 (resíduos)
+IRS0001,Cobertura da população total com coleta de resíduos sólidos domiciliares,Indicadores de Cobertura,SINISA 2024 (resíduos)
+IRS0002,Cobertura da população urbana com coleta de resíduos sólidos domiciliares,,SINISA 2024 (resíduos)
+IRS0003,Cobertura da população rural com coleta de resíduos sólidos domiciliares,,SINISA 2024 (resíduos)
+IRS0004,Cobertura da população urbana com coleta direta de resíduos sólidos domiciliares,,SINISA 2024 (resíduos)
+IRS0005,Cobertura da população total com coleta seletiva de resíduos sólidos domiciliares,,SINISA 2024 (resíduos)
+IRS0006,Cobertura da população urbana com coleta seletiva direta de resíduos sólidos domiciliares,,SINISA 2024 (resíduos)
+IRS1001,Incidência do transbordo de resíduos sólidos urbanos,Indicadores Operacionais,SINISA 2024 (resíduos)
+IRS1002,Capacidade média utilizada dos veículos motorizados na coleta de resíduos sólidos urbanos,,SINISA 2024 (resíduos)
+IRS1003,Quantidade média de pontos e locais de entrega voluntária de resíduos recicláveis por mil habitantes totais,,SINISA 2024 (resíduos)
+IRS1004,Massa média per capita de resíduos sólidos urbanos coletados,,SINISA 2024 (resíduos)
+IRS1005,Massa média per capita de resíduos sólidos domiciliares coletados,,SINISA 2024 (resíduos)
+IRS1006,Massa média per capita de resíduos sólidos de limpeza urbana coletados,,SINISA 2024 (resíduos)
+IRS1007,Massa média per capita de resíduos sólidos domiciliares coletados na coleta seletiva,,SINISA 2024 (resíduos)
+IRS1008,Massa média per capita de resíduos sólidos domiciliares secos e orgânicos recuperados,,SINISA 2024 (resíduos)
+IRS3001,Desempenho da coleta seletiva,Indicadores de Qualidade dos Serviços,SINISA 2024 (resíduos)
+IRS3002,Disposição final inadequada de resíduos sólidos urbanos,,SINISA 2024 (resíduos)
+IRS3004,Recuperação de resíduos recicláveis secos em relação à composição gravimétrica,,SINISA 2024 (resíduos)
+IRS3005,Recuperação de resíduos recicláveis orgânicos em relação à composição gravimétrica,,SINISA 2024 (resíduos)
+IRS3006,Participação da recuperação de papeis ou papelão nos materiais recicláveis secos recuperados,,SINISA 2024 (resíduos)
+IRS3007,Participação da recuperação de plásticos nos materiais recicláveis secos recuperados,,SINISA 2024 (resíduos)
+IRS3008,Participação da recuperação de metais nos materiais recicláveis secos recuperados,,SINISA 2024 (resíduos)
+IRS3009,Participação da recuperação de vidros nos materiais recicláveis secos recuperados,,SINISA 2024 (resíduos)
+IRS3010,Recuperação de resíduos recicláveis secos e orgânicos em relação à quantidade total coletada,,SINISA 2024 (resíduos)
+IRS3011,Recuperação de resíduos recicláveis secos em relação à quantidade total coletada,,SINISA 2024 (resíduos)
+IRS3012,Recuperação de resíduos recicláveis orgânicos em relação à quantidade total coletada,,SINISA 2024 (resíduos)
