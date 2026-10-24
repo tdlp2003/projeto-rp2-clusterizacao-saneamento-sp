@@ -1,20 +1,21 @@
-"""Testes de sanidade do preprocess.py (rode com: pytest test_preprocess.py)."""
+"""Testes de sanidade do src/preprocess.py (rode na raiz com: pytest)."""
 import numpy as np
 import pandas as pd
 import pytest
 
-from preprocess import Cfg, FEATURES, executar, grade, para_longo
+from src.config import PAINEL
+from src.preprocess import Cfg, FEATURES, executar, grade, para_longo
 
 
 @pytest.fixture(scope="module")
 def L():
-    df = pd.read_csv("painel_sp_2019_2024.csv", encoding="utf-8-sig")
-    return para_longo(df)
+    return para_longo(pd.read_csv(PAINEL, encoding="utf-8-sig"))
 
 
-def test_completos_ambos_521(L):
+def test_completos_ambos_607(L):
+    # matriz A4: 607 municípios completos nos dois anos (auditoria, §7)
     X, info = executar(L, Cfg(inclusao="completos_ambos"))
-    assert info["n_municipios"] == 521 and len(X) == 1042
+    assert info["n_municipios"] == 607 and len(X) == 2 * 607
 
 
 def test_zscore_conjunto_media0_dp1(L):
@@ -39,9 +40,7 @@ def test_nao_altera_entrada(L):
     pd.testing.assert_frame_equal(L, antes)
 
 
-def test_grade_sem_nan():
-    df = pd.read_csv("painel_sp_2019_2024.csv", encoding="utf-8-sig")
-    L = para_longo(df)
+def test_grade_sem_nan(L):
     for c in grade():
         X, _ = executar(L, c)
         assert not X.isna().any().any(), c.nome
@@ -52,4 +51,6 @@ def test_log_preserva_ordem(L):
     Xa, _ = executar(L, Cfg(transformacao="nenhuma", escala="minmax"))
     Xb, _ = executar(L, Cfg(transformacao="log", escala="minmax"))
     for f in FEATURES:
-        assert Xa[f].corr(Xb[f], method="spearman") > 0.999
+        # ordem nunca se inverte (empates são permitidos: o log corta >100, ex. Vinhedo)
+        ordenado = Xb[f].loc[Xa[f].sort_values(kind="stable").index].to_numpy()
+        assert (np.diff(ordenado) >= -1e-12).all(), f

@@ -1,65 +1,97 @@
-# Saneamento em SP — SNIS 2019 × SINISA 2024 (ref. 2024)
+# Clusterização de municípios de SP por saneamento (água e esgoto) — SNIS 2019 × SINISA 2024
 
-Este projeto só **prepara os dados**. Nenhuma análise, algoritmo ou número de clusters foi escolhido.
+Agrupar os 645 municípios de São Paulo pelos indicadores de abastecimento de água e esgotamento
+sanitário, comparar 2019 com 2024 e cruzar os grupos com o porte populacional.
 
-## 1. Onde estava a planilha SNIS-AE 2019 que faltava
-Dentro do `Planilhas_AE2019.zip` que você enviou. Os dados são **por prestador**, então SP vem em 4 arquivos:
-| arquivo | prestador | linhas SP |
+## Como rodar
+
+```bash
+pip install -r requirements.txt
+python -m src.build_panel     # etapa 1: planilhas brutas -> data/processed/painel_sp_2019_2024.csv
+python -m src.eda             # etapa 2: análise exploratória -> outputs/
+python -m src.preprocess      # etapa 3: grade de pré-processamento + sensibilidade -> outputs/
+pytest                        # testes
+```
+
+Sempre rodar **da raiz do repositório**. A etapa 1 extrai sozinha as planilhas necessárias dos ZIPs
+para `data/raw/extraido/`.
+
+## Fontes dos dados
+
+Todos os arquivos já estão em `data/raw/`. Para baixar de novo, use o link **"Baixar Tabelas"** (SNIS) ou
+**"Planilhas de Informações e Indicadores"** (SINISA) nas páginas oficiais:
+
+| Base | Página oficial | Arquivo |
 |---|---|---|
-| `Planilha_AE_Indicadores_SABESP-35503000.xls` | SABESP (regional) | 372 |
-| `Planilha_LPU_Indicadores.xls` | local, direito público (SAAEs, prefeituras) | 228 |
-| `Planilha_LEP_Indicadores.xls` | local, empresa privada | 25 |
-| `Planilha_LPR_Indicadores.xls` | local, direito privado c/ adm. pública | 6 |
+| SNIS água e esgoto 2019 | [Diagnóstico AE 2019 (MIDR)](https://www.gov.br/mdr/pt-br/assuntos/saneamento/snis/diagnosticos-anteriores-do-snis/agua-e-esgotos-1/2019) | `Planilhas_AE2019.zip` |
+| SNIS resíduos 2019 | [Diagnóstico RS 2019 (MIDR)](https://www.gov.br/mdr/pt-br/assuntos/saneamento/snis/diagnosticos-anteriores-do-snis/residuos-solidos-1/2019) | `DiagRS2019_XLS.zip` |
+| SINISA água, esgoto e resíduos, ano de referência 2024 | [Resultados SINISA 2025 (Ministério das Cidades)](https://www.gov.br/cidades/pt-br/acesso-a-informacao/acoes-e-programas/saneamento/sinisa/resultados-sinisa/resultados-sinisa-2025) | `SINISA_Resultados_Ref2024.zip` (água), `SINISA_ESGOTO_Planilhas_2024.zip`, `SINISA_RESIDUOS_planilhas_2024.zip` |
+| População, área, nome | export da plataforma "Municípios e Saneamento" (IAS) | `municipiose_saneamento_export_27_09_2026.csv` |
 
-Total: 631 linhas → **628 municípios** (3 municípios têm um prestador só de água e outro só de esgoto: Mauá, Salto, Santa Maria da Serra; o script junta os dois).
-Os **17 municípios de SP sem nenhum dado de água/esgoto em 2019** (ausentes também na Pesquisa Simplificada): Aramina, Ariranha, Boa Esperança do Sul, Borebi, Canitar, Cedral, Dumont, Ibitinga, Júlio Mesquita, Monte Castelo, Nova Castilho, Pacaembu, Paraíso, São João de Iracema, Tejupá, Uchoa, Vera Cruz.
+- O ano de referência 2024 está na página **"Resultados SINISA 2025"**. A página "Resultados SINISA 2024" é do ano de referência 2023.
+- A população do IAS é idêntica à variável DFE0001 do SINISA 2024 (conferido nos 645 municípios). No artigo, cite "SINISA 2024 (DFE0001)".
+- Os PDFs em `data/raw/` são os glossários de indicadores e o diagnóstico SNIS-AE 2019. São eles que definem a correspondência entre os códigos de 2019 e 2024.
+- Ao baixar de novo, coloque os zips no mesmo lugar e rode `pytest`. Se as contagens mudarem, a base foi retificada.
 
-## 2. Estrutura
+## Estrutura
+
 ```
-projeto_saneamento_sp/
-├── data/raw/            <- descompacte aqui (ver src/config.py)
-│   ├── snis_ae_2019/    (Planilhas_AE2019.zip + ZIPs internos descompactados)
-│   ├── snis_rs_2019/    (DiagRS2019_XLS.zip)
-│   └── sinisa_2024/     (3 ZIPs SINISA: água, esgoto, resíduos)
-├── data/processed/      <- saída do passo 1 (já incluída)
-├── src/
-│   ├── config.py        caminhos; SANEAMENTO_RAW sobrescreve data/raw
-│   ├── io_utils.py      leitura + localização automática da linha de códigos
-│   ├── build_panel.py   PASSO 1 (pronto e testado)
-│   └── (a criar) eda.py, preprocess.py, clustering.py, validation.py
-├── notebooks/           (a criar) 01_eda.ipynb ...
-└── outputs/             figuras e tabelas do artigo
+data/
+  raw/                 dados brutos (ZIPs, planilhas, PDFs, CSV do IAS) — não editar
+  processed/           painel_sp_2019_2024.csv, dicionario_variaveis.csv, cobertura_indicadores.csv
+src/
+  config.py            caminhos, RANDOM_STATE, faixas de porte e MATRIZES de indicadores (único lugar)
+  io_utils.py          leitura das planilhas e extração dos ZIPs
+  build_panel.py       etapa 1 — monta o painel (1 linha por município)
+  eda.py               etapa 2 — análise exploratória
+  preprocess.py        etapa 3 — pré-processamento parametrizado
+  (a criar) clustering.py, validation.py
+tests/                 testes do painel e do pré-processamento
+docs/
+  decisoes.md          registro de decisões (alimenta a metodologia) ← atualizar a cada decisão
+  metodologia_preparacao.md   descrição da etapa de preparação dos dados
+  auditoria_etapa1/    auditoria independente do painel e recomendação da matriz
+outputs/               figuras, tabelas e resumos gerados (fora do git)
 ```
-Rodar: `pip install -r requirements.txt` e depois `python -m src.build_panel` (na raiz).
 
-## 3. Arquivos gerados (`data/processed/`)
-- `painel_sp_2019_2024.csv` — **645 linhas** (universo IAS), colunas com prefixo `ae19_`, `rs19_`, `s24_`.
-- `snis_ae_2019_sp.csv`, `snis_rs_2019_sp.csv`, `sinisa_2024_sp.csv` — bases separadas.
-- `snis_ae_2019_sp_por_prestador.csv` — 631 linhas brutas, com prestador e tipo de serviço.
-- `dicionario_variaveis.csv` — código → nome → unidade → fonte.
-- `cobertura_indicadores.csv` — N preenchido por indicador.
+## Painel (`data/processed/painel_sp_2019_2024.csv`)
 
-## 4. Armadilhas (já tratadas no código, mas guarde para a metodologia)
+645 linhas (um município por linha), 244 colunas:
+- identificação e porte: `cod_ibge7`, `cod_mun6`, `municipio`, `populacao`, `populacao_urbana`,
+  `area_km2`, `log10_pop`, `porte`
+- indicadores com prefixo da base: `ae19_` (SNIS água/esgoto 2019), `rs19_` (SNIS resíduos 2019),
+  `s24_` (SINISA 2024), mais `respondeu_RS_2024`
+
+A população vem do export do IAS e é igual ao DFE0001 do SINISA 2024 (ano de referência 2024).
+
+## Matriz de indicadores
+
+Definida em `src/config.py`. Principal (**A4**, N = 607 municípios completos nos dois anos):
+
+| indicador | 2019 (SNIS) | 2024 (SINISA) |
+|---|---|---|
+| atendimento total de água | IN055 | IAG0001 |
+| perdas na distribuição | IN049 | IAG2013 |
+| atendimento total de esgoto | IN056 | IES0001 |
+| tratamento do esgoto coletado | IN016 | IES2004 |
+
+A matriz com resíduos (**R4**, N = 521) fica só para análise de sensibilidade. Justificativa em
+`docs/decisoes.md` e `docs/auditoria_etapa1/AUDITORIA_ETAPA1.md` (§5–10). Para trocar de matriz, mude
+`MATRIZ` em `config.py`.
+
+## Armadilhas dos dados (já tratadas no código; guardar para a metodologia)
+
 1. **Chave**: SNIS = IBGE sem dígito verificador (6 dígitos); SINISA = 7 dígitos. Join: `cod_ibge7 // 10 == cod_mun6`.
-2. **Colisão de códigos**: `IN015` no SNIS-AE é *índice de coleta de esgoto*; no SNIS-RS é *cobertura de coleta de RDO*. Por isso o painel usa prefixos.
-3. **Ano de referência**: a "edição SINISA 2024" é ref. 2023; os arquivos usados aqui (ref. 2024) são os publicados em 18/12/2025. A base de **água tem retificação (25/05/2026)**.
-4. **Equivalências oficiais** (glossários): IN055=IAG0001, IN023=IAG0002, IN056=IES0001, IN009=IAG1003 (o SINISA também tem IAG2002 = IN044), IN049=IAG2013, IN046=IES2003, IN015=IRS0001, IN016=IRS0002, IN028=IRS1004, IN022=IRS1005. **IN056 é referido a municípios atendidos com água**; confira a base populacional antes de tratar IES0001 como idêntico.
-5. **Não comparáveis**: IAG0004/IAG0005 não são calculados para SP no SINISA 2025.
-6. **Resíduos 2024**: `respondeu_RS_2024` = "Não" em 29 municípios (indicador vazio, não zero).
-7. **Comparabilidade temporal**: mudança SNIS→SINISA é mudança de metodologia/coleta; trate como limitação explícita.
+2. **Colisão de códigos**: `IN015`/`IN016` significam coisas diferentes no SNIS-AE (esgoto) e no SNIS-RS (resíduos). Por isso os prefixos.
+3. **SNIS-AE 2019 é por prestador**: SABESP (372 linhas SP), LPU (228), LEP (25), LPR (6) = 631 linhas → 628 municípios (Mauá, Salto e Santa Maria da Serra têm prestadores separados de água e esgoto).
+4. **17 municípios sem dado de água/esgoto em 2019**: Aramina, Ariranha, Boa Esperança do Sul, Borebi, Canitar, Cedral, Dumont, Ibitinga, Júlio Mesquita, Monte Castelo, Nova Castilho, Pacaembu, Paraíso, São João de Iracema, Tejupá, Uchoa, Vera Cruz.
+5. **Ano do SINISA**: os arquivos usados são de referência 2024 (publicados em 18/12/2025); a base de **água foi retificada em 25/05/2026**. Escrever sempre "SINISA, ano de referência 2024".
+6. **Valores impossíveis conhecidos**: Vinhedo `IES2004` = 129,42%; 11 municípios com perdas = 0 em 2019. Tratamento pendente (`docs/decisoes.md`).
+7. **Comparabilidade temporal**: SNIS → SINISA é mudança de metodologia; diferenças entre 2019 e 2024 misturam mudança real e mudança de coleta. Declarar como limitação.
 
-## 5. Municípios completos por combinação (contagem mecânica, não é recomendação)
-| combinação | N |
-|---|---|
-| 2024: água + esgoto + RS (IAG0001, IES0001, IRS0001, IRS1004) | 599 |
-| 2019: IN055, IN056, RS IN015, RS IN028 | 551 |
-| 2019 e 2024, os 4 indicadores acima nos dois anos | 521 |
-| 2019 e 2024, só água + esgoto | 607 |
+## Próximas etapas
 
-## 6. Como estruturar as próximas etapas (sem decidir nada antecipadamente)
-**`eda.py`** — por indicador e por ano: N, % ausentes, quantis, assimetria, % no teto (100%) ou no zero, outliers (IQR e z robusto), matriz de correlação de **Spearman** dentro de cada ano, e mapa de ausência (`missingno`/heatmap) para ver se a falta é aleatória (por porte, por prestador).
-**`preprocess.py`** — funções puras que recebem o painel e devolvem X, com cada decisão parametrizada e registrada: (a) regra de inclusão (casos completos vs. imputação — compare os dois); (b) tratamento de teto/assimetria (winsorização, log1p, ou nada); (c) padronização (Z, robust scaler, min-max); (d) **um scaler ajustado por ano ou conjunto?** — para comparar 2019×2024 use o mesmo scaler/mesmo espaço, senão os clusters não são comparáveis.
-**`clustering.py`** — interface única `fit(X, algoritmo, k, seed)` que retorna rótulos. Rode **vários algoritmos com a mesma matriz** (ex.: k-means, aglomerativo com Ward/average, GMM, DBSCAN/HDBSCAN) e deixe os dados decidirem.
-**`validation.py`** — para escolher k sem arbitrariedade: silhouette, Calinski–Harabasz, Davies–Bouldin, gap statistic e, para GMM, BIC/AIC, tudo em uma grade de k; **estabilidade** por bootstrap (ARI entre reamostras) e por perturbação de seed; sensibilidade ao pré-processamento (ARI entre pipelines). Reporte a curva inteira, não só o máximo.
-**Comparação temporal** — cluster 2019 e 2024 no mesmo espaço padronizado (ou clusterize o empilhado) e analise a matriz de transição de municípios; discuta a limitação de metodologia.
-**Reprodutibilidade** — `random_state` fixo em `config.py`, versões no `requirements.txt`, uma tabela de "decisões de pré-processamento" gerada automaticamente para a seção de metodologia.
+- **`clustering.py`**: interface única `fit(X, algoritmo, k, seed)`; K-means, Ward e GMM na mesma matriz.
+- **`validation.py`**: curva de k (silhouette, Calinski–Harabasz, Davies–Bouldin, BIC), estabilidade por bootstrap (ARI).
+- **Comparação temporal**: ajuste por ano + ajuste no empilhado 2019+2024; matriz de transição.
+- **Porte**: cluster × faixa de porte (Cramér's V, Kruskal–Wallis), sem usar porte na formação dos grupos.

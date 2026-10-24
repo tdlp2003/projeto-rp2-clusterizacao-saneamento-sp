@@ -1,6 +1,7 @@
 """
-Passo 1 — Constrói as bases MUNICIPAIS de SP (2019 SNIS e 2024 SINISA) sem nenhuma análise.
+Etapa 1 — Constrói as bases MUNICIPAIS de SP (2019 SNIS e 2024 SINISA) sem nenhuma análise.
 Saídas em data/processed/:
+  painel_sp_2019_2024.csv    1 linha/município (645), prefixos ae19_/rs19_/s24_ + população e porte
   snis_ae_2019_sp.csv        1 linha/município (628 mun.), todas as colunas IN...
   snis_rs_2019_sp.csv        1 linha/município, todas as colunas IN...
   sinisa_2024_sp.csv         1 linha/município, IAG/IES/IRS... (join externo das 3 dimensões)
@@ -9,9 +10,12 @@ Saídas em data/processed/:
 Rodar da raiz do projeto:  python -m src.build_panel
 """
 import re
-import pandas as pd, numpy as np
-from .config import AE2019, RS2019, SINISA2024, UF, PROC
-from .io_utils import find_one, read_raw, locate_code_row
+
+import numpy as np
+import pandas as pd
+
+from .config import AE2019, IAS, PAINEL, PORTE_CORTES, PORTE_ROTULOS, PROC, RAW, RS2019, SINISA2024, UF
+from .io_utils import extrair_zips, find_one, locate_code_row, read_raw
 
 def _s(x):
     return "" if pd.isna(x) else str(x).strip()
@@ -105,15 +109,43 @@ def load_sinisa_2024():
     p = ag.merge(es, on="cod_ibge7", how="outer").merge(rs, on="cod_ibge7", how="outer")
     return p, {**d1, **d2, **d3}
 
+def _num_br(s: pd.Series) -> pd.Series:
+    """'35.642' -> 35642.0 ; '411,99' -> 411.99 (o CSV do IAS usa formato brasileiro)."""
+    return pd.to_numeric(s.str.replace(".", "", regex=False).str.replace(",", ".", regex=False),
+                         errors="coerce")
+
+
+def load_populacao_ias():
+    """Nome, população e porte de cada município (export do IAS; população = DFE0001, ref. 2024).
+
+    São Paulo (3550308) aparece duas vezes no CSV (redes "RMSP" e "Capitais"), com os mesmos valores.
+    """
+    d = pd.read_csv(RAW / IAS, sep=";", encoding="utf-8-sig", dtype=str)
+    d = d[d["UF"] == UF].drop_duplicates("Código IBGE")
+    pop = pd.DataFrame({
+        "cod_ibge7": d["Código IBGE"].astype(int),
+        "municipio": d["Cidade"].str.strip(),
+        "populacao": _num_br(d["População"]),
+        "populacao_urbana": _num_br(d["População Urbana - Habitantes"]),
+        "area_km2": _num_br(d["Área Territorial - km2"]),
+    })
+    assert pop["cod_ibge7"].is_unique and pop["populacao"].notna().all()
+    pop["log10_pop"] = np.log10(pop["populacao"])
+    pop["porte"] = pd.cut(pop["populacao"], bins=PORTE_CORTES, labels=PORTE_ROTULOS, right=True)
+    return pop
+
+
 def main():
     PROC.mkdir(parents=True, exist_ok=True)
+    extrair_zips()
     ae19, d_ae = load_snis_ae_2019()
     rs19, d_rs = load_snis_rs_2019()
     s24, d_s = load_sinisa_2024()
     ae19.to_csv(PROC / "snis_ae_2019_sp.csv", index=False, encoding="utf-8-sig")
     rs19.to_csv(PROC / "snis_rs_2019_sp.csv", index=False, encoding="utf-8-sig")
     s24.to_csv(PROC / "sinisa_2024_sp.csv", index=False, encoding="utf-8-sig")
-    dic = pd.DataFrame([(k, *v) for k, v in {**d_ae, **d_rs, **d_s}.items()],
+    # um dicionário por base: os códigos se repetem entre AE e RS (IN015, IN016...) com significados diferentes
+    dic = pd.DataFrame([(k, *v) for d in (d_ae, d_rs, d_s) for k, v in d.items()],
                        columns=["codigo", "nome", "unidade", "fonte"]).drop_duplicates(["codigo", "fonte"])
     dic.to_csv(PROC / "dicionario_variaveis.csv", index=False, encoding="utf-8-sig")
     cov = pd.concat([
@@ -128,9 +160,18 @@ def main():
     rs = rs19.drop(columns=["Município"]).add_prefix("rs19_").rename(columns={"rs19_cod_mun6": "cod_mun6"})
     sn = s24.drop(columns=["respondeu_RS_2024"]).add_prefix("s24_").rename(columns={"s24_cod_mun6": "cod_mun6", "s24_cod_ibge7": "cod_ibge7"})
     painel = sn.merge(ae, on="cod_mun6", how="left").merge(rs, on="cod_mun6", how="left")
-    painel["respondeu_RS_2024"] = s24["respondeu_RS_2024"].values
-    painel.to_csv(PROC / "painel_sp_2019_2024.csv", index=False, encoding="utf-8-sig")
-    print("AE2019:", len(ae19), "| RS2019:", len(rs19), "| SINISA2024:", len(s24))
+    painel = painel.merge(s24[["cod_ibge7", "respondeu_RS_2024"]], on="cod_ibge7", how="left")
+    # população e porte (colunas de identificação vêm primeiro)
+    pop = load_populacao_ias()
+    painel = pop.merge(painel, on="cod_ibge7", how="outer", validate="1:1", indicator=True)
+    assert (painel["_merge"] == "both").all(), "municípios do IAS e do painel não coincidem"
+    painel = painel.drop(columns="_merge")
+    ident = ["cod_ibge7", "cod_mun6", "municipio", "populacao", "populacao_urbana", "area_km2",
+             "log10_pop", "porte"]
+    painel = painel[ident + [c for c in painel.columns if c not in ident]]
+    painel.to_csv(PAINEL, index=False, encoding="utf-8-sig")
+    print("AE2019:", len(ae19), "| RS2019:", len(rs19), "| SINISA2024:", len(s24),
+          "| painel:", painel.shape)
 
 if __name__ == "__main__":
     main()

@@ -1,65 +1,65 @@
 ﻿codigo,nome,unidade,fonte
-IN003,Incidência de despesas com RSU na prefeitura,%,SNIS-RS 2019
-IN026,Relação: quantidade RCD coletada pela Pref. p/quant. total  [RDO+RPU],%,SNIS-RS 2019
-IN027,Relação: quantidades coletadas de RPU por RDO,%,SNIS-RS 2019
-IN004,Incidência de despesas com  empresas contratadas,%,SNIS-RS 2019
-IN005,Auto-suficiência  financeira,%,SNIS-RS 2019
-IN006,Despesas per capita com RSU,R$/habitante,SNIS-RS 2019
+IN003,Despesa total com os serviços por m3 faturado,R$/m³,SNIS-AE 2019
+IN026,Despesa de exploração por m3 faturado,R$/m³,SNIS-AE 2019
+IN027,Despesa de exploração por economia,R$/ano/econ.,SNIS-AE 2019
+IN004,Tarifa média praticada,R$/m³,SNIS-AE 2019
+IN005,Tarifa média de água,R$/m³,SNIS-AE 2019
+IN006,Tarifa média de esgoto,R$/m³,SNIS-AE 2019
 IN012,Indicador de desempenho financeiro,percentual,SNIS-AE 2019
-IN029,Massa de RCD per capita/ano em relação à pop. urbana,Kg/(hab.x ano),SNIS-RS 2019
-IN007,incidência de  empregados próprios,%,SNIS-RS 2019
-IN008,Incidência de empreg. de empr. contrat. no total de empreg. no manejo,%,SNIS-RS 2019
-IN030,Taxa de cobertura da col. Seletiva porta-a-porta em relação a pop. Urbana,%,SNIS-RS 2019
-IN031,Taxa de recuperação de recicláveis em relação à quantidade de RDO e RPU,%,SNIS-RS 2019
-IN032,Massa recuperada per capita,Kg/(hab. x ano),SNIS-RS 2019
+IN029,Índice de evasão de receitas,percentual,SNIS-AE 2019
+IN007,Incidencia da despesa de pessoal e de serviço de terceiros nas despesas totais com os serviços,percentual,SNIS-AE 2019
+IN008,Despesa média anual por empregado,R$/empreg.,SNIS-AE 2019
+IN030,Margem da despesa de exploração,percentual,SNIS-AE 2019
+IN031,Margem da despesa com pessoal próprio,percentual,SNIS-AE 2019
+IN032,Margem da despesa com pessoal próprio  total (equivalente),percentual,SNIS-AE 2019
 IN033,Margem do serviço da divida,percentual,SNIS-AE 2019
-IN034,Incid. de papel/papelão sobre total mat. recuperado,%,SNIS-RS 2019
-IN035,Incid. de plásticos sobre total material recuperado,%,SNIS-RS 2019
-IN036,Massa de RSS coletada per capita,Kg/(1000hab.  X dia),SNIS-RS 2019
-IN037,Taxa de RSS sobre [RDO+RPU],%,SNIS-RS 2019
-IN038,Incid.de metais sobre total material recuperado,%,SNIS-RS 2019
-IN039,Incid.de vidros sobre total de material recuperado,%,SNIS-RS 2019
-IN040,Incidência de ''outros'' sobre total material recuperado,%,SNIS-RS 2019
-IN041,Taxa de terceirização de varredores,%,SNIS-RS 2019
-IN042,Taxa de terceirização de varrição,%,SNIS-RS 2019
-IN054,Massa per capita recolhida via coleta seletiva,Kg/(hab. x ano),SNIS-RS 2019
-IN018,Produtividades média de coletadores e motorista,Kg/empregado  x dia,SNIS-RS 2019
-IN019,Taxa de motoristas e coletadores por habitante urbano,empreg./1000hab.,SNIS-RS 2019
+IN034,Margem das outras despesas de exploração,percentual,SNIS-AE 2019
+IN035,Participação da despesa com pessoal próprio nas despesas de exploração,percentual,SNIS-AE 2019
+IN036,Participação da despesa com pessoal total (equivalente) nas despesas de exploração,percentual,SNIS-AE 2019
+IN037,Participação da despesa com energia elétrica nas despesas de exploração,percentual,SNIS-AE 2019
+IN038,Participação da despesa com produtos químicos nas despesas de exploração,percentual,SNIS-AE 2019
+IN039,Participação das outras despesas na despesa de exploração,percentual,SNIS-AE 2019
+IN040,Participação da receita operacional direta de água na receita operacional total,percentual,SNIS-AE 2019
+IN041,Participação da receita operacional direta de esgoto na receita operacional total,percentual,SNIS-AE 2019
+IN042,Participação da receita operacional indireta na receita operacional total,percentual,SNIS-AE 2019
+IN054,Dias de faturamento comprometidos com contas a receber,dias,SNIS-AE 2019
+IN018,Quantidade equivalente de pessoal total,empregados,SNIS-AE 2019
+IN019,Índice de produtividade: economias ativas por pessoal total (equivalente),econ./empreg. eqv.,SNIS-AE 2019
 IN102,Índice de produtividade de pessoal total (equivalente),ligações/empreg.,SNIS-AE 2019
-IN048,Extensão total anual varrida per capita,Km/(hab. x ano),SNIS-RS 2019
-IN002,Despesa por empregado,R$/empregado,SNIS-RS 2019
-IN045,Taxa de varredores por habitante urbano,empreg./1000hab.,SNIS-RS 2019
+IN048,Índice de produtividade: empregados próprios por 1.000 ligações de água + esgoto,empreg./mil lig.,SNIS-AE 2019
+IN002,Índice de produtividade: economias ativas por pessoal próprio,econ./empreg.,SNIS-AE 2019
+IN045,Índice de produtividade: empregados próprios por 1.000 ligações de água,empreg./mil lig.,SNIS-AE 2019
 IN101,Índice de suficiência de caixa,percentual,SNIS-AE 2019
 IN060,Índice de despesas por consumo de energia elétrica nos sistemas de água e esgotos,R$/ kWh,SNIS-AE 2019
 IN055,Índice de atendimento total de água,percentual,SNIS-AE 2019
-IN023,Custo unitário da coleta,R$/tonelada,SNIS-RS 2019
-IN001,Taxa de empregados por habitante urbano,empreg./1000hab.,SNIS-RS 2019
-IN043,Custo unitário da varrição,R$/km,SNIS-RS 2019
-IN011,Receita arrecadada per capita com serviços de manejo,R$/habitante,SNIS-RS 2019
+IN023,Índice de atendimento urbano de água,percentual,SNIS-AE 2019
+IN001,Densidade de economias de água por ligação,econ./lig.,SNIS-AE 2019
+IN043,Participação das economias residenciais de água no total das economias de água,percentual,SNIS-AE 2019
+IN011,Índice de macromedição,percentual,SNIS-AE 2019
 IN009,Índice de hidrometração,percentual,SNIS-AE 2019
-IN010,Incidência de empreg. admin. no total de empreg no manejo,%,SNIS-RS 2019
-IN044,Produtividade média do varredores,km/(empreg x dia),SNIS-RS 2019
+IN010,Índice de micromedição relativo ao volume disponibilizado,percentual,SNIS-AE 2019
+IN044,Índice de micromedição relativo ao consumo,percentual,SNIS-AE 2019
 IN057,Índice de fluoretação de água,percentual,SNIS-AE 2019
-IN052,Relação de capinadores no total de empregados no manejo,%,SNIS-RS 2019
-IN025,Incidência de emprega.da coleta no total de empregados no manejo,%,SNIS-RS 2019
-IN053,Relação entre quantidades da coleta seletiva e RDO,%,SNIS-RS 2019
-IN014,Tx. cobertura de coleta direta RDO relativo à pop. urbana,%,SNIS-RS 2019
-IN017,Taxa de terceirização da coleta,%,SNIS-RS 2019
-IN022,Massa RDO coletada per capita em relação à pop. total atendida,Kg/(hab.x dia),SNIS-RS 2019
+IN052,Índice de consumo de água,percentual,SNIS-AE 2019
+IN025,Volume de água disponibilizado por economia,m³/mês/econ,SNIS-AE 2019
+IN053,Consumo médio de água por economia,m³/mês/econ,SNIS-AE 2019
+IN014,Consumo micromedido por economia,m³/mês/econ,SNIS-AE 2019
+IN017,Consumo de água faturado por economia,m³/mês/econ,SNIS-AE 2019
+IN022,Consumo médio per Capita de água,l/hab.dia,SNIS-AE 2019
 IN058,Índice de consumo de energia elétrica em sistemas de abastecimento de água,kWh/m3,SNIS-AE 2019
 IN020,Extensão da rede de água por ligação,m/lig.,SNIS-AE 2019
-IN028,Massa [RDO+RPU] coletada per capita em relação à população total atendida,Kg/(hab.x dia),SNIS-RS 2019
+IN028,Índice de faturamento de água,percentual,SNIS-AE 2019
 IN013,Índice de perdas faturamento,percentual,SNIS-AE 2019
 IN049,Índice de perdas na distribuição,percentual,SNIS-AE 2019
 IN050,Índice bruto de perdas lineares,m³/dia/km,SNIS-AE 2019
-IN051,Taxa de capinadores por habitante urbano,empreg./1000hab.,SNIS-RS 2019
+IN051,Índice de perdas por ligação,l/dia/lig.,SNIS-AE 2019
 IN056,Índice de atendimento total de esgoto referido aos municípios atendidos com água,percentual,SNIS-AE 2019
-IN024,Incidência do custo da coleta no custo total do manejo,%,SNIS-RS 2019
-IN047,Incidência de varredores no total de empregados no manejo,%,SNIS-RS 2019
-IN015,Tx cobertura da coleta RDO em relação à pop. total,%,SNIS-RS 2019
-IN016,Tx cobertura da coleta RDO em relação à pop. urbana,%,SNIS-RS 2019
-IN046,Incidência do custo da varrição no custo total do manejo,%,SNIS-RS 2019
-IN021,Massa [RDO+RPU] coletada per capita em relação à pop. urbana,Kg/(hab.x dia),SNIS-RS 2019
+IN024,Índice de atendimento urbano de esgoto referido aos municípios atendidos com água,percentual,SNIS-AE 2019
+IN047,Índice de atendimento urbano de esgoto referido aos municípios atendidos com esgoto,percentual,SNIS-AE 2019
+IN015,Índice de coleta de esgoto,percentual,SNIS-AE 2019
+IN016,Índice de tratamento de esgoto,percentual,SNIS-AE 2019
+IN046,Índice de esgoto tratado referido à água consumida,percentual,SNIS-AE 2019
+IN021,Extensão da rede de esgoto por ligação,m/lig.,SNIS-AE 2019
 IN059,Índice de consumo de energia elétrica em sistemas de esgotamento sanitário,kWh/m³,SNIS-AE 2019
 IN071,Economias atingidas por paralisações,econ./paralis.,SNIS-AE 2019
 IN072,Duração média das paralisações,horas/paralis.,SNIS-AE 2019
@@ -83,6 +83,53 @@ IN065,Margem líquida com depreciação,percentual,SNIS-AE 2019
 IN069,Margem líquida sem depreciação,percentual,SNIS-AE 2019
 IN066,Retorno sobre o patrimônio líquido,percentual,SNIS-AE 2019
 IN067,Composição de exigibilidades,percentual,SNIS-AE 2019
+IN001,Taxa de empregados por habitante urbano,empreg./1000hab.,SNIS-RS 2019
+IN002,Despesa por empregado,R$/empregado,SNIS-RS 2019
+IN003,Incidência de despesas com RSU na prefeitura,%,SNIS-RS 2019
+IN004,Incidência de despesas com  empresas contratadas,%,SNIS-RS 2019
+IN005,Auto-suficiência  financeira,%,SNIS-RS 2019
+IN006,Despesas per capita com RSU,R$/habitante,SNIS-RS 2019
+IN007,incidência de  empregados próprios,%,SNIS-RS 2019
+IN008,Incidência de empreg. de empr. contrat. no total de empreg. no manejo,%,SNIS-RS 2019
+IN010,Incidência de empreg. admin. no total de empreg no manejo,%,SNIS-RS 2019
+IN011,Receita arrecadada per capita com serviços de manejo,R$/habitante,SNIS-RS 2019
+IN015,Tx cobertura da coleta RDO em relação à pop. total,%,SNIS-RS 2019
+IN016,Tx cobertura da coleta RDO em relação à pop. urbana,%,SNIS-RS 2019
+IN014,Tx. cobertura de coleta direta RDO relativo à pop. urbana,%,SNIS-RS 2019
+IN017,Taxa de terceirização da coleta,%,SNIS-RS 2019
+IN018,Produtividades média de coletadores e motorista,Kg/empregado  x dia,SNIS-RS 2019
+IN019,Taxa de motoristas e coletadores por habitante urbano,empreg./1000hab.,SNIS-RS 2019
+IN021,Massa [RDO+RPU] coletada per capita em relação à pop. urbana,Kg/(hab.x dia),SNIS-RS 2019
+IN022,Massa RDO coletada per capita em relação à pop. total atendida,Kg/(hab.x dia),SNIS-RS 2019
+IN023,Custo unitário da coleta,R$/tonelada,SNIS-RS 2019
+IN024,Incidência do custo da coleta no custo total do manejo,%,SNIS-RS 2019
+IN025,Incidência de emprega.da coleta no total de empregados no manejo,%,SNIS-RS 2019
+IN026,Relação: quantidade RCD coletada pela Pref. p/quant. total  [RDO+RPU],%,SNIS-RS 2019
+IN027,Relação: quantidades coletadas de RPU por RDO,%,SNIS-RS 2019
+IN028,Massa [RDO+RPU] coletada per capita em relação à população total atendida,Kg/(hab.x dia),SNIS-RS 2019
+IN029,Massa de RCD per capita/ano em relação à pop. urbana,Kg/(hab.x ano),SNIS-RS 2019
+IN030,Taxa de cobertura da col. Seletiva porta-a-porta em relação a pop. Urbana,%,SNIS-RS 2019
+IN031,Taxa de recuperação de recicláveis em relação à quantidade de RDO e RPU,%,SNIS-RS 2019
+IN032,Massa recuperada per capita,Kg/(hab. x ano),SNIS-RS 2019
+IN053,Relação entre quantidades da coleta seletiva e RDO,%,SNIS-RS 2019
+IN034,Incid. de papel/papelão sobre total mat. recuperado,%,SNIS-RS 2019
+IN035,Incid. de plásticos sobre total material recuperado,%,SNIS-RS 2019
+IN038,Incid.de metais sobre total material recuperado,%,SNIS-RS 2019
+IN039,Incid.de vidros sobre total de material recuperado,%,SNIS-RS 2019
+IN040,Incidência de ''outros'' sobre total material recuperado,%,SNIS-RS 2019
+IN054,Massa per capita recolhida via coleta seletiva,Kg/(hab. x ano),SNIS-RS 2019
+IN036,Massa de RSS coletada per capita,Kg/(1000hab.  X dia),SNIS-RS 2019
+IN037,Taxa de RSS sobre [RDO+RPU],%,SNIS-RS 2019
+IN041,Taxa de terceirização de varredores,%,SNIS-RS 2019
+IN042,Taxa de terceirização de varrição,%,SNIS-RS 2019
+IN043,Custo unitário da varrição,R$/km,SNIS-RS 2019
+IN044,Produtividade média do varredores,km/(empreg x dia),SNIS-RS 2019
+IN045,Taxa de varredores por habitante urbano,empreg./1000hab.,SNIS-RS 2019
+IN046,Incidência do custo da varrição no custo total do manejo,%,SNIS-RS 2019
+IN047,Incidência de varredores no total de empregados no manejo,%,SNIS-RS 2019
+IN048,Extensão total anual varrida per capita,Km/(hab. x ano),SNIS-RS 2019
+IN051,Taxa de capinadores por habitante urbano,empreg./1000hab.,SNIS-RS 2019
+IN052,Relação de capinadores no total de empregados no manejo,%,SNIS-RS 2019
 IAG0001,Atendimento da população total com rede de abastecimento de água,Percentual,SINISA 2024 (água)
 IAG0002,Atendimento da população urbana com rede de abastecimento de água,Percentual,SINISA 2024 (água)
 IAG0003,Atendimento da população rural com rede de abastecimento de água,Percentual,SINISA 2024 (água)

@@ -12,13 +12,14 @@ Decisões parametrizadas
     escopo         conjunto (mesmo espaço 2019+2024) | por_ano
 
 Uso (na raiz do repositório):
-    python preprocess.py                 # grade completa + sensibilidade
-    python preprocess.py --ks 3,4,5      # outros k para a sonda de sensibilidade
-    python preprocess.py --sem-sensibilidade
+    python -m src.preprocess                 # grade completa + sensibilidade
+    python -m src.preprocess --ks 3,4,5      # outros k para a sonda de sensibilidade
+    python -m src.preprocess --sem-sensibilidade
 
 Como biblioteca (para clustering.py):
-    from preprocess import Cfg, para_longo, executar
-    L = para_longo(pd.read_csv("painel_sp_2019_2024.csv", encoding="utf-8-sig"))
+    from src.config import PAINEL
+    from src.preprocess import Cfg, para_longo, executar
+    L = para_longo(pd.read_csv(PAINEL, encoding="utf-8-sig"))
     X, info = executar(L, Cfg(inclusao="completos_ambos", transformacao="winsor_log"))
 
 Nenhum algoritmo, k ou pipeline final é escolhido aqui. K-means e Ward só são
@@ -48,21 +49,12 @@ from sklearn.cluster import AgglomerativeClustering, KMeans
 from sklearn.impute import KNNImputer
 from sklearn.metrics import adjusted_rand_score
 
-try:  # config.py do projeto, se definir a semente
-    from config import RANDOM_STATE  # type: ignore
-except Exception:  # noqa: BLE001
-    RANDOM_STATE = 42
+from .config import ANOS, INDICADORES, MATRIZ, OUT, PAINEL, RANDOM_STATE
 
 # ------------------------------------------------------------------ indicadores
-# nome_harmonizado: (coluna 2019, coluna 2024, tipo)
-CORE = {
-    "agua":   ("ae19_IN055", "s24_IAG0001", "pct"),
-    "esgoto": ("ae19_IN056", "s24_IES0001", "pct"),
-    "coleta": ("rs19_IN015", "s24_IRS0001", "pct"),
-    "massa":  ("rs19_IN028", "s24_IRS1004", "massa"),  # kg/hab/dia
-}
+# Indicadores e anos vêm de config.py (INDICADORES = matriz principal).
+CORE = INDICADORES
 FEATURES = tuple(CORE)
-ANOS = (2019, 2024)
 
 INCLUSAO = ("completos_ambos", "completos_ano", "imp_mediana", "imp_knn")
 TRANSF = ("nenhuma", "winsor", "log", "winsor_log")
@@ -80,7 +72,7 @@ DESCRICAO = {
     "transformacao": {
         "nenhuma": "Valores originais.",
         "winsor": "Corta cada indicador nos quantis winsor_q (limites estimados conforme o escopo).",
-        "log": "Percentuais: -log(100-x+log_c) (abre o teto de 100%, mantém a direção); massa: log1p(x).",
+        "log": "Indicadores com teto em 100%: -log(100-x+log_c) (abre o teto, mantém a direção); assimétricos (ex.: perdas): log1p(x).",
         "winsor_log": "Winsorização seguida da transformação log.",
     },
     "escala": {
@@ -132,7 +124,7 @@ def para_longo(df: pd.DataFrame, features=FEATURES) -> pd.DataFrame:
     for i, ano in enumerate(ANOS):
         p = pd.DataFrame({"cod_mun6": df["cod_mun6"].to_numpy(), "ano": ano})
         for f in features:
-            p[f] = df[CORE[f][i]].to_numpy(dtype=float)
+            p[f] = df[(CORE[f].col_2019, CORE[f].col_2024)[i]].to_numpy(dtype=float)
         partes.append(p)
     return pd.concat(partes, ignore_index=True).set_index(["cod_mun6", "ano"]).sort_index()
 
@@ -198,14 +190,14 @@ def winsorizar(L: pd.DataFrame, features, q, escopo: str) -> tuple[pd.DataFrame,
 
 
 def logar(L: pd.DataFrame, features, c: float = 1.0) -> pd.DataFrame:
-    """pct: -log(100 - x + c), c=1 equivale a -log1p(100-x) (monotônica crescente); massa: log1p(x).
+    """teto: -log(100 - x + c), c=1 equivale a -log1p(100-x) (monotônica crescente); assimetrica: log1p(x).
 
     Cuidado: com c pequeno, 99% vs 100% vira uma distância grande (0,69 com c=1);
     c maior suaviza a expansão do teto.
     """
     L = L.copy()
     for f in features:
-        if CORE[f][2] == "pct":
+        if CORE[f].tipo == "teto":
             L[f] = -np.log(100.0 - L[f].clip(0, 100) + c)
         else:
             L[f] = np.log1p(L[f].clip(lower=0))
@@ -381,14 +373,13 @@ def fig_efeito_marginal(sens: pd.DataFrame, out: Path):
 # ------------------------------------------------------------------ main
 def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    ap.add_argument("painel", nargs="?", default="painel_sp_2019_2024.csv")
+    ap.add_argument("painel", nargs="?", default=str(PAINEL))
     ap.add_argument("--ks", default="3,4,5,6")
     ap.add_argument("--sem-sensibilidade", action="store_true")
     ap.add_argument("--min-obs", type=int, default=3, help="mín. de indicadores observados para imputar")
     a = ap.parse_args()
     ks = tuple(int(x) for x in a.ks.split(","))
 
-    OUT = Path("outputs")
     TAB, FIG, PRE = OUT / "tabelas", OUT / "figuras", OUT / "preproc"
     for d in (TAB, FIG, PRE):
         d.mkdir(parents=True, exist_ok=True)
@@ -454,7 +445,7 @@ def main():
     R = ["# Resumo do pré-processamento\n"]
     R.append(f"Grade: **{len(cfgs)}** pipelines = {len(INCLUSAO)} inclusões × {len(TRANSF)} transformações × "
              f"{len(ESCALA)} escalas × {len(ESCOPO)} escopos, sobre {len(FEATURES)} indicadores "
-             f"({', '.join(FEATURES)}).\n")
+             f"da matriz {MATRIZ} ({', '.join(FEATURES)}).\n")
     R.append("## Tabela de decisões\n")
     R.append(dec.drop(columns=["na_referencia_provisoria"]).to_markdown(index=False))
     R.append("\n## Municípios retidos por regra de inclusão\n")

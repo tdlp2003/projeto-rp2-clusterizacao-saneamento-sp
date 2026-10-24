@@ -1,12 +1,16 @@
-# dados brutos (grandes; cada integrante baixa/descompacta localmente)
-data/raw/*
-!data/raw/.gitkeep
+# dados brutos: ficam versionados em data/raw/; só o que é extraído dos ZIPs fica fora
+data/raw/extraido/
+# bases intermediárias (regeneradas por python -m src.build_panel)
+data/processed/snis_ae_2019_sp.csv
+data/processed/snis_rs_2019_sp.csv
+data/processed/sinisa_2024_sp.csv
 # python
 __pycache__/
 *.pyc
 .venv/
+.pytest_cache/
 .ipynb_checkpoints/
-# saídas pesadas
+# saídas (regeneradas pelos scripts)
 outputs/*
 !outputs/.gitkeep
 # sistema
