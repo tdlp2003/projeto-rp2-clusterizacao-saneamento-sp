@@ -13,3 +13,5 @@ Uma linha por decisão. Alimenta a seção de metodologia do artigo.
 | | | 11 municípios com perdas = 0 em 2019 (todos LPU; suspeita de dado inconsistente) | manter × NaN × sensibilidade com/sem | *pendente* |
 | | | Regra de inclusão (casos completos × imputação) | | *pendente*. Obs.: na A4 a imputação (`min_obs=3`) não imputa nenhuma célula, então equivale a `completos_ano` (639 mun.) |
 | | | Transformação e padronização | | *pendente* (ver `outputs/resumo_preproc.md`: transformação e escala são as decisões que mais mudam a partição) |
+| 2026-10-24 | Carol | Algoritmo: **K-means** (n_init = 50, random_state = 42); k escolhido pelo **Método da Silhueta** (maior silhueta média sobre todas as instâncias, grade k = 2..10; empate → menor k). 2019 e 2024 clusterizados juntos no mesmo espaço | outros algoritmos (Ward, GMM); outros critérios de k | Definido pelo grupo |
+| | | Configuração de pré-processamento usada na clusterização | | *pendente*. O k* muda com ela (completos_ambos, conjunto): sem transformação ou só winsor → k = 3 nas 3 escalas; log/winsor_log → k = 2 (robust), 3 (minmax), 4 (zscore). A referência provisória (winsor_log + robust) dá k = 2 |

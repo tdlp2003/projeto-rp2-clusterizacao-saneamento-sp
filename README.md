@@ -10,6 +10,7 @@ pip install -r requirements.txt
 python -m src.build_panel     # etapa 1: planilhas brutas -> data/processed/painel_sp_2019_2024.csv
 python -m src.eda             # etapa 2: análise exploratória -> outputs/
 python -m src.preprocess      # etapa 3: grade de pré-processamento + sensibilidade -> outputs/
+python -m src.clustering      # etapa 4: K-means, k escolhido pelo Método da Silhueta -> outputs/
 pytest                        # testes
 ```
 
@@ -45,8 +46,8 @@ src/
   build_panel.py       etapa 1 — monta o painel (1 linha por município)
   eda.py               etapa 2 — análise exploratória
   preprocess.py        etapa 3 — pré-processamento parametrizado
-  (a criar) clustering.py, validation.py
-tests/                 testes do painel e do pré-processamento
+  clustering.py        etapa 4 — K-means + Método da Silhueta (maior silhueta média sobre todas as instâncias)
+tests/                 testes do painel, do pré-processamento e da clusterização
 docs/
   decisoes.md          registro de decisões (alimenta a metodologia) ← atualizar a cada decisão
   metodologia_preparacao.md   descrição da etapa de preparação dos dados
@@ -79,6 +80,28 @@ A matriz com resíduos (**R4**, N = 521) fica só para análise de sensibilidade
 `docs/decisoes.md` e `docs/auditoria_etapa1/AUDITORIA_ETAPA1.md` (§5–10). Para trocar de matriz, mude
 `MATRIZ` em `config.py`.
 
+## Clusterização (`src/clustering.py`)
+
+- **K-means** (n_init = 50, `RANDOM_STATE` = 42) sobre a matriz X do `preprocess.py`. Por padrão usa a
+  configuração `REFERENCIA` (provisória); dá para trocar com `--inclusao`, `--transformacao`,
+  `--escala` e `--escopo`.
+- **Número de clusters pelo Método da Silhueta**: para cada k da grade (padrão 2..10, mude com
+  `--kmin`/`--kmax`), calcula a silhueta média, isto é, a média de s(i) = (b − a) / max(a, b) sobre
+  todas as instâncias. Escolhe o k de maior média; em empate, o menor k.
+- 2019 e 2024 são clusterizados **juntos, no mesmo espaço** (cada município-ano é uma instância),
+  então o cluster de um município é comparável entre os anos. Clusters numerados por tamanho
+  (1 = maior).
+- Saídas:
+  - `outputs/resumo_clustering.md`: curva da silhueta, k escolhido, perfis, cluster × porte e transição
+  - `outputs/tabelas/kmeans_silhueta_por_k.csv`: silhueta média, inércia e menor cluster por k
+  - `outputs/tabelas/kmeans_rotulos.csv`: cluster e s(i) de cada município-ano, com porte e valores originais
+  - `outputs/tabelas/kmeans_perfis.csv`: medianas dos indicadores por cluster
+  - `outputs/tabelas/kmeans_cluster_por_porte.csv`: % de cada faixa de porte em cada cluster, por ano
+  - `outputs/tabelas/kmeans_transicao_2019_2024.csv`: quantos municípios mudaram de cluster
+  - `outputs/figuras/kmeans_silhueta_por_k.png` e `kmeans_silhueta_instancias.png`
+- **Atenção**: o k escolhido depende do pré-processamento (k = 2, 3 ou 4 conforme transformação e
+  escala; ver `docs/decisoes.md`).
+
 ## Armadilhas dos dados (já tratadas no código; guardar para a metodologia)
 
 1. **Chave**: SNIS = IBGE sem dígito verificador (6 dígitos); SINISA = 7 dígitos. Join: `cod_ibge7 // 10 == cod_mun6`.
@@ -91,7 +114,9 @@ A matriz com resíduos (**R4**, N = 521) fica só para análise de sensibilidade
 
 ## Próximas etapas
 
-- **`clustering.py`**: interface única `fit(X, algoritmo, k, seed)`; K-means, Ward e GMM na mesma matriz.
-- **`validation.py`**: curva de k (silhouette, Calinski–Harabasz, Davies–Bouldin, BIC), estabilidade por bootstrap (ARI).
-- **Comparação temporal**: ajuste por ano + ajuste no empilhado 2019+2024; matriz de transição.
-- **Porte**: cluster × faixa de porte (Cramér's V, Kruskal–Wallis), sem usar porte na formação dos grupos.
+- **Pré-processamento final**: o k escolhido pela silhueta muda com a transformação/escala (ver `docs/decisoes.md`); fixar a configuração antes de interpretar os clusters.
+- **Interpretar e nomear os clusters** a partir dos perfis, depois de fixar o pré-processamento.
+- **Porte**: a tabela cluster × porte já sai do `clustering.py`; falta o teste de associação
+  (ex.: qui-quadrado/Cramér's V).
+- **Comparação temporal**: a matriz de transição 2019 → 2024 já sai do `clustering.py`; falta
+  discutir a limitação SNIS → SINISA ao interpretá-la.
