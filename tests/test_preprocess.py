@@ -54,3 +54,27 @@ def test_log_preserva_ordem(L):
         # ordem nunca se inverte (empates são permitidos: o log corta >100, ex. Vinhedo)
         ordenado = Xb[f].loc[Xa[f].sort_values(kind="stable").index].to_numpy()
         assert (np.diff(ordenado) >= -1e-12).all(), f
+
+
+# ------------------------------------------------------------------ tratamento de valores
+from src.config import TRATAMENTOS
+from src.preprocess import tratar_valores
+
+
+def test_decisao_registrada_em_config():
+    assert TRATAMENTOS == {"acima_100": "truncar", "perdas_zero": "retirar"}
+
+
+def test_tratar_valores_aplica_a_decisao():
+    bruto = pd.read_csv(PAINEL, encoding="utf-8-sig")
+    p, reg = tratar_valores(bruto)
+    assert p.loc[p.municipio == "Vinhedo", "s24_IES2004"].item() == 100
+    assert (p["ae19_IN049"] == 0).sum() == 0 and p["ae19_IN049"].isna().sum() == bruto["ae19_IN049"].isna().sum() + 11
+    assert len(reg["alteracoes"]) == 12                       # Vinhedo + 11 zeros
+    assert bruto.loc[bruto.municipio == "Vinhedo", "s24_IES2004"].item() == pytest.approx(129.42)
+
+
+def test_amostra_final_597():
+    p, _ = tratar_valores(pd.read_csv(PAINEL, encoding="utf-8-sig"))
+    _, info = executar(para_longo(p), Cfg(inclusao="completos_ambos"))
+    assert info["n_municipios"] == 597                        # 607 - 10 com perdas 0 em 2019

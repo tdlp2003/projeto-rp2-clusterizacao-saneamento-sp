@@ -1,0 +1,13 @@
+cod_mun6,municipio,populacao,s24_IES2004,ae19_IN049,Vinhedo=manter | perdas0=manter,Vinhedo=manter | perdas0=retirar,Vinhedo=manter | perdas0=sem_perdas,Vinhedo=truncar | perdas0=manter,Vinhedo=truncar | perdas0=retirar,Vinhedo=truncar | perdas0=sem_perdas,Vinhedo=retirar | perdas0=manter,Vinhedo=retirar | perdas0=retirar,Vinhedo=retirar | perdas0=sem_perdas
+350460,Bady Bassitt,28909,,0.0,fora,fora,fora,fora,fora,fora,fora,fora,fora
+350980,Campos Novos Paulista,4991,100.0,0.0,2 → 1 (k=2),fora,2 → 1 (k=2),2 → 1 (k=2),fora,2 → 1 (k=2),2 → 1 (k=2),fora,2 → 1 (k=2)
+351220,Conchal,29034,100.0,0.0,1 → 1 (k=2),fora,2 → 1 (k=2),1 → 1 (k=2),fora,2 → 1 (k=2),1 → 1 (k=2),fora,2 → 1 (k=2)
+352650,Lavínia,9909,97.47,0.0,1 → 1 (k=2),fora,1 → 1 (k=2),1 → 1 (k=2),fora,1 → 1 (k=2),1 → 1 (k=2),fora,1 → 1 (k=2)
+352760,Luís Antônio,12531,100.0,0.0,1 → 1 (k=2),fora,1 → 1 (k=2),1 → 1 (k=2),fora,1 → 1 (k=2),1 → 1 (k=2),fora,1 → 1 (k=2)
+353325,Novais,4469,0.0,0.0,2 → 2 (k=2),fora,2 → 2 (k=2),2 → 2 (k=2),fora,2 → 2 (k=2),2 → 2 (k=2),fora,2 → 2 (k=2)
+354370,Rincão,9145,0.0,0.0,2 → 2 (k=2),fora,2 → 2 (k=2),2 → 2 (k=2),fora,2 → 2 (k=2),2 → 2 (k=2),fora,2 → 2 (k=2)
+354630,Santa Cruz das Palmeiras,29525,22.08,0.0,2 → 2 (k=2),fora,2 → 2 (k=2),2 → 2 (k=2),fora,2 → 2 (k=2),2 → 2 (k=2),fora,2 → 2 (k=2)
+355190,Severínia,14724,100.0,0.0,1 → 1 (k=2),fora,1 → 1 (k=2),1 → 1 (k=2),fora,1 → 1 (k=2),1 → 1 (k=2),fora,1 → 1 (k=2)
+355320,Taiúva,6733,100.0,0.0,1 → 1 (k=2),fora,1 → 1 (k=2),1 → 1 (k=2),fora,1 → 1 (k=2),1 → 1 (k=2),fora,1 → 1 (k=2)
+355365,Taquaral,2652,100.0,0.0,1 → 1 (k=2),fora,1 → 1 (k=2),1 → 1 (k=2),fora,1 → 1 (k=2),1 → 1 (k=2),fora,1 → 1 (k=2)
+355670,Vinhedo,79235,129.42,33.63,1 → 1 (k=2),1 → 1 (k=2),1 → 1 (k=2),1 → 1 (k=2),1 → 1 (k=2),1 → 1 (k=2),fora,fora,fora

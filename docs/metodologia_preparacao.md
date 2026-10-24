@@ -2,6 +2,8 @@
 
 > Documento de apoio ao relatório. Descreve o contexto, as decisões, o que foi feito, os resultados e as limitações da etapa de **preparação e verificação de viabilidade** da base.
 > **Nenhuma análise estatística, algoritmo de clusterização ou número de clusters foi definido nesta etapa.**
+>
+> **Atualização (24/10/2026):** depois desta etapa, o grupo definiu a **matriz A4** (água, perdas, esgoto e tratamento do esgoto; 607 municípios) e excluiu resíduos da clusterização (ver seção 4.3 e `docs/decisoes.md`). O painel passou a incluir população e porte. As seções abaixo foram corrigidas onde ficaram desatualizadas.
 
 ---
 
@@ -94,17 +96,24 @@ Os totais do SINISA 2024 são contados sobre os 645 municípios do painel. Em re
 | 2019 e 2024, os quatro indicadores nos dois anos | 521 |
 | 2019 e 2024, somente água + esgoto | 607 |
 
-Leitura: **é viável construir uma base comparável**, mas o tamanho da amostra depende de incluir ou não resíduos. Incluir resíduos custa cerca de 86 municípios (607 → 521). A escolha da matriz final cabe ao grupo e deve ser justificada na metodologia.
+Leitura: **é viável construir uma base comparável**, mas o tamanho da amostra depende de incluir ou não resíduos. Incluir resíduos custa cerca de 86 municípios (607 → 521).
+
+### 4.3 Matriz escolhida (decisão do grupo, 24/10/2026)
+
+**A4: atendimento de água (IN055 ↔ IAG0001), perdas na distribuição (IN049 ↔ IAG2013), atendimento de esgoto (IN056 ↔ IES0001) e tratamento do esgoto coletado (IN016 ↔ IES2004); 607 municípios completos nos dois anos.**
+
+- Resíduos ficou fora: a definição e a população de referência mudam entre SNIS e SINISA (correlação 2019×2024 de 0,35 na cobertura e 0,18 na massa per capita) e a inclusão excluiria 86 municípios, quase todos pequenos (só 77,2% dos municípios de até 20 mil teriam dados completos, contra 92,8% na A4).
+- Perdas é a variável de comparabilidade mais frágil; a matriz A3 (sem perdas) fica como análise de sensibilidade.
+- Detalhes: `docs/auditoria_etapa1/AUDITORIA_ETAPA1.md` (§5–10).
 
 ## 5. Produtos gerados (`data/processed/`)
 
 | Arquivo | Conteúdo |
 |---|---|
-| `painel_sp_2019_2024.csv` | 645 linhas (um município por linha), com colunas prefixadas `ae19_`, `rs19_` e `s24_` |
+| `painel_sp_2019_2024.csv` | 645 linhas (um município por linha), com colunas prefixadas `ae19_`, `rs19_` e `s24_`, mais nome, população (DFE0001 do SINISA 2024) e faixa de porte |
 | `snis_ae_2019_sp.csv` | SNIS água e esgoto 2019, 628 municípios |
 | `snis_rs_2019_sp.csv` | SNIS resíduos 2019, 556 municípios |
 | `sinisa_2024_sp.csv` | SINISA 2024 (água, esgoto e resíduos), 645 municípios |
-| `snis_ae_2019_sp_por_prestador.csv` | 631 linhas brutas, com prestador e tipo de serviço |
 | `dicionario_variaveis.csv` | Código, nome, unidade e fonte de cada indicador |
 | `cobertura_indicadores.csv` | Número de municípios com valor por indicador |
 
@@ -124,13 +133,14 @@ Conforme os glossários oficiais do Ministério das Cidades: IN055 = IAG0001; IN
 
 1. **Mudança de sistema e metodologia (SNIS → SINISA).** Diferenças entre 2019 e 2024 podem refletir mudanças de coleta e de método, e não apenas evolução real. A baixa correlação entre anos em resíduos (seção 3.1) reforça esse cuidado.
 2. **IN056 e IES0001.** O IN056 é referido aos municípios atendidos com água; a equivalência exata com o IES0001 deve ser verificada quanto à base populacional antes de tratá-los como idênticos.
-3. **IAG0004 e IAG0005** (atendimento de domicílios com rede de água) não são calculados para SP no SINISA 2025, segundo nota metodológica; não podem ser usados.
+3. **IAG0004 e IAG0005** (atendimento de domicílios com rede de água) têm valor para só parte dos municípios de SP (cerca de 75% e 66%), por regras de bloqueio do cálculo, e não têm par no SNIS 2019; não são usados.
 4. **17 municípios sem dados de água e esgoto em 2019** e 29 sem resposta em resíduos 2024. Verificar se a ausência está relacionada ao porte ou ao tipo de prestador, o que afetaria a representatividade.
 5. **Autodeclaração.** Os dados são informados pelos próprios prestadores e municípios, com qualidade variável, especialmente em resíduos.
 6. **Base de água 2024 retificada** em 25/05/2026: citar a versão usada.
-7. **Dicionário de variáveis:** nomes e unidades foram extraídos por posição relativa das linhas de cabeçalho e **não foram revisados manualmente**. Revisar antes de usar em tabelas do artigo.
-8. **Leitura de `.xls`.** Os testes foram feitos com `.xls` convertidos para `.xlsx`. A leitura direta com `xlrd` não foi testada.
-9. **Números anteriores.** As correlações 2019 × 2024 (seção 3.1) vêm de etapa anterior e não foram recalculadas aqui.
+7. **Dicionário de variáveis:** nomes e unidades foram extraídos por posição relativa das linhas de cabeçalho e **não foram revisados manualmente**; as unidades dos indicadores de resíduos 2024 estão erradas (vem o título do grupo). Os nomes dos indicadores da matriz A4 foram conferidos.
+8. **Leitura de `.xls`.** O pipeline atual lê os `.xls` originais diretamente com `xlrd` e reproduz o painel sem nenhuma diferença.
+9. **Números anteriores.** As correlações 2019 × 2024 foram recalculadas: cobertura de resíduos 0,35 e cobertura urbana 0,09 conferem; massa per capita (IN028 × IRS1004) é 0,18, e não 0,11.
+10. **Valores impossíveis ou suspeitos na matriz A4:** Vinhedo com tratamento de 129,42% em 2024; 11 municípios com perdas de 0% em 2019; 7 municípios com perdas ≥ 85% em 2024. Tratamento pendente (`docs/decisoes.md`).
 
 ## 9. Próximos passos sugeridos
 
@@ -145,6 +155,7 @@ Conforme os glossários oficiais do Ministério das Cidades: IN055 = IAG0001; IN
 ```bash
 pip install -r requirements.txt
 python -m src.build_panel
+pytest
 ```
 
 Detalhes de pastas e arquivos brutos esperados estão no `README.md` da raiz do projeto.

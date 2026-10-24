@@ -34,7 +34,8 @@ from sklearn.cluster import KMeans
 from sklearn.metrics import silhouette_samples, silhouette_score
 
 from .config import ANOS, INDICADORES, MATRIZ, OUT, PAINEL, PORTE_ROTULOS, RANDOM_STATE
-from .preprocess import ESCALA, ESCOPO, INCLUSAO, REFERENCIA, TRANSF, Cfg, executar, para_longo
+from .preprocess import (ESCALA, ESCOPO, INCLUSAO, REFERENCIA, TRANSF, Cfg, executar, para_longo,
+                         tratar_valores)
 
 N_INIT = 50   # reinícios do k-means (fica a melhor inércia)
 
@@ -148,7 +149,7 @@ def main():
     for d in (TAB, FIG):
         d.mkdir(parents=True, exist_ok=True)
 
-    painel = pd.read_csv(PAINEL, encoding="utf-8-sig")
+    painel, reg_trat = tratar_valores(pd.read_csv(PAINEL, encoding="utf-8-sig"))  # config.TRATAMENTOS
     L = para_longo(painel)
     cfg = replace(REFERENCIA, inclusao=a.inclusao, transformacao=a.transformacao,
                   escala=a.escala, escopo=a.escopo)
@@ -201,6 +202,9 @@ def main():
     R.append(f"- Pré-processamento: `{cfg.nome}` "
              f"({'referência provisória' if cfg == REFERENCIA else 'escolhido na linha de comando'}).")
     R.append(f"- Instâncias: **{len(X)}** (municípios-ano), {info['n_municipios']} municípios.")
+    R.append(f"- Tratamento de valores: valores > 100 → **{reg_trat['acima_100']}**; perdas = 0 → "
+             f"**{reg_trat['perdas_zero']}** ({len(reg_trat['alteracoes'])} células; ver "
+             "`docs/decisao_vinhedo_perdas.md`).")
     R.append(f"- K-means: n_init = {N_INIT}, random_state = {a.seed}. Grade k = {a.kmin}..{a.kmax}.")
     R.append(f"\n## Silhueta média por k\n\n{curva.round(4).to_markdown(index=False)}\n")
     R.append(f"**k escolhido = {k}** (maior silhueta média = {curva.silhueta_media.max():.4f}).\n")

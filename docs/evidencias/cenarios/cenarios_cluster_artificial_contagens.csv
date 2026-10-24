@@ -1,0 +1,9 @@
+cluster,config,demais,perdas = 0
+1,completos_ambos|log|zscore|conjunto,605,0
+2,completos_ambos|log|zscore|conjunto,367,0
+3,completos_ambos|log|zscore|conjunto,190,0
+4,completos_ambos|log|zscore|conjunto,42,10
+1,completos_ambos|winsor_log|zscore|conjunto,605,0
+2,completos_ambos|winsor_log|zscore|conjunto,365,0
+3,completos_ambos|winsor_log|zscore|conjunto,190,0
+4,completos_ambos|winsor_log|zscore|conjunto,44,10

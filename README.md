@@ -11,6 +11,7 @@ python -m src.build_panel     # etapa 1: planilhas brutas -> data/processed/pain
 python -m src.eda             # etapa 2: análise exploratória -> outputs/
 python -m src.preprocess      # etapa 3: grade de pré-processamento + sensibilidade -> outputs/
 python -m src.clustering      # etapa 4: K-means, k escolhido pelo Método da Silhueta -> outputs/
+python -m src.cenarios        # compara tratamentos de Vinhedo e das perdas zeradas (~2,5 min) -> outputs/
 pytest                        # testes
 ```
 
@@ -47,9 +48,15 @@ src/
   eda.py               etapa 2 — análise exploratória
   preprocess.py        etapa 3 — pré-processamento parametrizado
   clustering.py        etapa 4 — K-means + Método da Silhueta (maior silhueta média sobre todas as instâncias)
-tests/                 testes do painel, do pré-processamento e da clusterização
+  cenarios.py          compara cenários de tratamento de Vinhedo (>100%) e das perdas = 0 em 2019
+tests/                 testes do painel, do pré-processamento, da clusterização e dos cenários
+paper/
+  artigo.tex, referencias.bib   artigo (modelo SBC), revisado para a matriz A4
+  figuras/             figuras do artigo (cópias de outputs/figuras/)
 docs/
   decisoes.md          registro de decisões (alimenta a metodologia) ← atualizar a cada decisão
+  decisao_vinhedo_perdas.md   justificativa completa do tratamento de Vinhedo e das perdas zeradas
+  evidencias/cenarios/ cópia das saídas de src/cenarios.py usadas nessa decisão
   metodologia_preparacao.md   descrição da etapa de preparação dos dados
   auditoria_etapa1/    auditoria independente do painel e recomendação da matriz
 outputs/               figuras, tabelas e resumos gerados (fora do git)
@@ -76,7 +83,12 @@ Definida em `src/config.py`. Principal (**A4**, N = 607 municípios completos no
 | atendimento total de esgoto | IN056 | IES0001 |
 | tratamento do esgoto coletado | IN016 | IES2004 |
 
-A matriz com resíduos (**R4**, N = 521) fica só para análise de sensibilidade. Justificativa em
+**Tratamento de valores** (`TRATAMENTOS` em `config.py`, aplicado por `preprocess.tratar_valores`):
+Vinhedo (tratamento 129,42%) é truncado em 100 e os 11 zeros de perdas de 2019 viram ausentes, o que
+deixa **597 municípios** na análise principal. Justificativa: `docs/decisao_vinhedo_perdas.md`.
+
+Matrizes de sensibilidade: **A3** (A4 sem perdas, a variável de correspondência mais fraca) e **R4**
+(com resíduos, N = 521). Justificativa em
 `docs/decisoes.md` e `docs/auditoria_etapa1/AUDITORIA_ETAPA1.md` (§5–10). Para trocar de matriz, mude
 `MATRIZ` em `config.py`.
 
@@ -101,6 +113,27 @@ A matriz com resíduos (**R4**, N = 521) fica só para análise de sensibilidade
   - `outputs/figuras/kmeans_silhueta_por_k.png` e `kmeans_silhueta_instancias.png`
 - **Atenção**: o k escolhido depende do pré-processamento (k = 2, 3 ou 4 conforme transformação e
   escala; ver `docs/decisoes.md`).
+
+## Artigo (`paper/`)
+
+Compilar: `cd paper && pdflatex artigo && bibtex artigo && pdflatex artigo && pdflatex artigo`
+(ou subir a pasta no Overleaf). As figuras vêm do `src/eda.py`; se os dados mudarem, rode
+`python -m src.eda` e copie de novo `distribuicoes_2019_2024.png`, `correlacao_spearman_2019_2024.png`
+e `dispersao_2019_vs_2024.png` para `paper/figuras/`. O `sbc.bst` é uma cópia do modelo da SBC com
+"and" trocado por "e" entre autores.
+
+## Cenários de tratamento (`src/cenarios.py`)
+
+Testa 9 cenários (3 × 3) em 12 configurações de pré-processamento e compara cada um com o cenário
+"manter tudo" (ARI, % de municípios que mudam de cluster e k escolhido):
+
+| Problema | Opções |
+|---|---|
+| Vinhedo: tratamento 2024 = 129,42% | `manter`, `truncar` (vira 100), `retirar` (município sai) |
+| 11 municípios com perdas = 0% em 2019 | `manter`, `retirar` (municípios saem), `sem_perdas` (matriz A3) |
+
+Saídas: `outputs/resumo_cenarios.md`, `outputs/tabelas/cenarios_resumo.csv` e `cenarios_casos.csv`,
+`outputs/figuras/cenarios_ari.png` e `cenarios_k.png`.
 
 ## Armadilhas dos dados (já tratadas no código; guardar para a metodologia)
 

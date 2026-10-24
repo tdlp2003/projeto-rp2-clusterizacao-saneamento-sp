@@ -18,8 +18,9 @@ Uso (na raiz do repositório):
 
 Como biblioteca (para clustering.py):
     from src.config import PAINEL
-    from src.preprocess import Cfg, para_longo, executar
-    L = para_longo(pd.read_csv(PAINEL, encoding="utf-8-sig"))
+    from src.preprocess import Cfg, executar, para_longo, tratar_valores
+    painel, _ = tratar_valores(pd.read_csv(PAINEL, encoding="utf-8-sig"))   # decisão registrada
+    L = para_longo(painel)
     X, info = executar(L, Cfg(inclusao="completos_ambos", transformacao="winsor_log"))
 
 Nenhum algoritmo, k ou pipeline final é escolhido aqui. K-means e Ward só são
@@ -49,7 +50,7 @@ from sklearn.cluster import AgglomerativeClustering, KMeans
 from sklearn.impute import KNNImputer
 from sklearn.metrics import adjusted_rand_score
 
-from .config import ANOS, INDICADORES, MATRIZ, OUT, PAINEL, RANDOM_STATE
+from .config import ANOS, INDICADORES, MATRIZ, MATRIZES, OUT, PAINEL, RANDOM_STATE, TRATAMENTOS
 
 # ------------------------------------------------------------------ indicadores
 # Indicadores e anos vêm de config.py (INDICADORES = matriz principal).
@@ -115,6 +116,45 @@ def grade(**extra) -> list[Cfg]:
 
 # Referência PROVISÓRIA só para desenvolver clustering.py; não é decisão final.
 REFERENCIA = Cfg("completos_ambos", "winsor_log", "robust", "conjunto")
+
+
+# ------------------------------------------------------------------ tratamento de valores
+OPCOES_ACIMA_100 = ("manter", "truncar", "retirar")
+OPCOES_PERDAS_ZERO = ("manter", "retirar")
+
+
+def tratar_valores(painel: pd.DataFrame, acima_100: str = TRATAMENTOS["acima_100"],
+                   perdas_zero: str = TRATAMENTOS["perdas_zero"]) -> tuple[pd.DataFrame, dict]:
+    """Trata valores impossíveis/implausíveis no painel largo, antes do para_longo.
+
+    acima_100:   percentuais > 100 nos indicadores da matriz A4 (só Vinhedo, tratamento 2024).
+    perdas_zero: perdas na distribuição = 0 (11 municípios em 2019).
+    O padrão é a decisão registrada em config.TRATAMENTOS. Não altera a entrada.
+    Devolve (painel tratado, registro do que foi alterado).
+    """
+    assert acima_100 in OPCOES_ACIMA_100 and perdas_zero in OPCOES_PERDAS_ZERO
+    p = painel.copy()
+    reg = {"acima_100": acima_100, "perdas_zero": perdas_zero, "alteracoes": []}
+    nome = p["municipio"] if "municipio" in p else p["cod_mun6"].astype(str)
+    pct = [c for i in MATRIZES["A4"].values() if i.unidade == "%" for c in (i.col_2019, i.col_2024)]
+    for c in pct:
+        m = p[c] > 100
+        for idx in p.index[m]:
+            reg["alteracoes"].append(f"{nome[idx]}: {c} = {p.at[idx, c]} -> "
+                                     f"{'100' if acima_100 == 'truncar' else 'ausente' if acima_100 == 'retirar' else 'mantido'}")
+        if acima_100 == "truncar":
+            p.loc[m, c] = 100.0
+        elif acima_100 == "retirar":
+            p.loc[m, c] = np.nan
+    perdas = MATRIZES["A4"]["perdas"]
+    for c in (perdas.col_2019, perdas.col_2024):
+        m = p[c] == 0
+        for idx in p.index[m]:
+            reg["alteracoes"].append(f"{nome[idx]}: {c} = 0 -> "
+                                     f"{'ausente' if perdas_zero == 'retirar' else 'mantido'}")
+        if perdas_zero == "retirar":
+            p.loc[m, c] = np.nan
+    return p, reg
 
 
 # ------------------------------------------------------------------ dados
@@ -385,7 +425,7 @@ def main():
         d.mkdir(parents=True, exist_ok=True)
     sns.set_theme(style="whitegrid", context="paper")
 
-    df = pd.read_csv(a.painel, encoding="utf-8-sig")
+    df, reg_trat = tratar_valores(pd.read_csv(a.painel, encoding="utf-8-sig"))
     L = para_longo(df)
     cfgs = grade(min_obs=a.min_obs)
 
@@ -476,6 +516,11 @@ def main():
     R.append("\n## Referência provisória (só para desenvolver clustering.py)\n")
     R.append(f"`{REFERENCIA.nome}` — salva em `outputs/preproc/X_referencia_provisoria.csv` "
              f"({ir['n_linhas']} linhas, {ir['n_municipios']} municípios). **Não é a decisão final.**\n")
+    R.append("## Tratamento de valores (antes da grade)\n")
+    R.append(f"Vinhedo / valores > 100: **{reg_trat['acima_100']}**; perdas = 0: **{reg_trat['perdas_zero']}** "
+             "(decisão em `docs/decisao_vinhedo_perdas.md`). Alterações:\n")
+    R.extend(f"- {x}" for x in reg_trat["alteracoes"])
+    R.append("")
     R.append("## Reprodutibilidade\n")
     R.append(f"- `RANDOM_STATE = {RANDOM_STATE}`; Python {platform.python_version()}, numpy {np.__version__}, "
              f"pandas {pd.__version__}, scipy {scipy.__version__}, scikit-learn {sklearn.__version__}.\n"

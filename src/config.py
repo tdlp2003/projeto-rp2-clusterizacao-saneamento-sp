@@ -65,6 +65,12 @@ MATRIZES = {
         "esgoto":     Indicador("ae19_IN056", "s24_IES0001", "teto", "Esgoto (atend. total)", "%"),
         "tratamento": Indicador("ae19_IN016", "s24_IES2004", "teto", "Tratamento do esgoto coletado", "%"),
     },
+    # Sensibilidade: A4 sem perdas (variável com correspondência mais fraca entre SNIS e SINISA).
+    "A3": {
+        "agua":       Indicador("ae19_IN055", "s24_IAG0001", "teto", "Água (atend. total)", "%"),
+        "esgoto":     Indicador("ae19_IN056", "s24_IES0001", "teto", "Esgoto (atend. total)", "%"),
+        "tratamento": Indicador("ae19_IN016", "s24_IES2004", "teto", "Tratamento do esgoto coletado", "%"),
+    },
     # Matriz usada antes (inclui resíduos). Mantida só para análise de sensibilidade.
     "R4": {
         "agua":   Indicador("ae19_IN055", "s24_IAG0001", "teto", "Água (atend. total)", "%"),
@@ -73,5 +79,14 @@ MATRIZES = {
         "massa":  Indicador("rs19_IN028", "s24_IRS1004", "assimetrica", "Massa coletada per capita", "kg/hab/dia"),
     },
 }
-MATRIZ = "A4"                      # matriz principal do artigo
+MATRIZ = "A4"                      # matriz principal do artigo (decidida pelo grupo em 2026-10-24)
 INDICADORES = MATRIZES[MATRIZ]
+
+# ------------------------------------------------------------------ tratamento de valores
+# Decisão do grupo em 2026-10-24, tomada com base em `python -m src.cenarios`
+# (justificativa completa em docs/decisao_vinhedo_perdas.md e docs/decisoes.md).
+#   acima_100:   indicador em % com valor > 100 (só Vinhedo, tratamento 2024 = 129,42)
+#                "manter" | "truncar" (vira 100) | "retirar" (vira ausente)
+#   perdas_zero: perdas na distribuição = 0% (11 municípios em 2019; 10 na amostra A4)
+#                "manter" | "retirar" (vira ausente -> município sai dos casos completos)
+TRATAMENTOS = {"acima_100": "truncar", "perdas_zero": "retirar"}

@@ -33,6 +33,7 @@ for d in (TAB, FIG):
     d.mkdir(parents=True, exist_ok=True)
 
 sns.set_theme(style="whitegrid", context="paper")
+C19, C24 = "#2a78d6", "#eb6834"   # cores fixas: 2019 (SNIS) e 2024 (SINISA)
 plt.rcParams.update({"figure.dpi": 130, "savefig.bbox": "tight"})
 
 # ---------------------------------------------------------------- dados
@@ -129,30 +130,37 @@ tab_tempo = pd.DataFrame(rows)
 tab_tempo.round(3).to_csv(TAB / "comparacao_2019_2024_pareada.csv", index=False)
 
 # ---------------------------------------------------------------- 4. correlações
-for ano, cols in (("2019", [a for a, _, _ in CORE.values()]),
-                  ("2024", [b for _, b, _ in CORE.values()])):
+# uma figura com os dois anos lado a lado (título fica na legenda do artigo)
+fig, axes = plt.subplots(1, 3, figsize=(10, 4.4), gridspec_kw={"width_ratios": [1, 1, 0.05], "wspace": 0.1})
+cax = axes[2]
+for j, (ax, (ano, cols)) in enumerate(zip(axes[:2], (("2019", [a for a, _, _ in CORE.values()]),
+                                                ("2024", [b for _, b, _ in CORE.values()])))):
     corr = df[cols].corr(method="spearman")
     corr.index = corr.columns = list(CORE)
     corr.round(3).to_csv(TAB / f"spearman_{ano}.csv")
-    fig, ax = plt.subplots(figsize=(4.6, 3.8))
-    sns.heatmap(corr, annot=True, fmt=".2f", cmap="RdBu_r", vmin=-1, vmax=1, ax=ax,
-                cbar_kws={"label": "ρ de Spearman"})
-    ax.set_title(f"Correlação de Spearman — {ano}")
-    fig.savefig(FIG / f"correlacao_spearman_{ano}.png")
-    plt.close(fig)
+    sns.heatmap(corr, annot=True, fmt=".2f", cmap="RdBu_r", vmin=-1, vmax=1, ax=ax, square=True,
+                cbar=j == 1, cbar_ax=cax if j == 1 else None, cbar_kws={"label": "ρ de Spearman"},
+                yticklabels=j == 0, annot_kws={"size": 9})
+    ax.set_title(ano, fontsize=10)
+    ax.tick_params(axis="x", rotation=30, labelsize=8)
+    ax.tick_params(axis="y", labelsize=8)
+    for t in ax.get_xticklabels():
+        t.set_ha("right")
+fig.savefig(FIG / "correlacao_spearman_2019_2024.png")
+plt.close(fig)
 
 # ---------------------------------------------------------------- 5. figuras
 # 5a. distribuições 2019 x 2024
 fig, axes = plt.subplots(2, (len(CORE) + 1) // 2, figsize=(9, 6.4), squeeze=False)
 for ax, (k, (a, b, u)) in zip(axes.ravel(), CORE.items()):
-    for col, lab, cor in ((a, "2019 (SNIS)", "#4C78A8"), (b, "2024 (SINISA)", "#F58518")):
-        sns.histplot(df[col].dropna(), bins=30, stat="density", alpha=.45, color=cor,
+    bins = np.histogram_bin_edges(pd.concat([df[a], df[b]]).dropna(), bins=30)  # mesmas faixas nos 2 anos
+    for col, lab, cor in ((a, "2019 (SNIS)", C19), (b, "2024 (SINISA)", C24)):
+        sns.histplot(df[col].dropna(), bins=bins, stat="density", alpha=.45, color=cor,
                      label=lab, ax=ax, edgecolor="white")
     ax.set_title(k)
     ax.set_xlabel(u)
     ax.set_ylabel("")
 axes[0, 0].legend(frameon=False)
-fig.suptitle("Distribuição dos indicadores centrais, 2019 × 2024", y=1.01)
 fig.tight_layout()
 fig.savefig(FIG / "distribuicoes_2019_2024.png")
 plt.close(fig)
@@ -164,7 +172,7 @@ for ax, (k, (a, b, u)) in zip(axes, CORE.items()):
         pd.DataFrame({"ano": "2019", "v": df[a]}),
         pd.DataFrame({"ano": "2024", "v": df[b]}),
     ]).dropna()
-    sns.boxplot(data=long, x="ano", y="v", ax=ax, palette=["#4C78A8", "#F58518"],
+    sns.boxplot(data=long, x="ano", y="v", ax=ax, palette=[C19, C24],
                 hue="ano", legend=False, fliersize=2)
     ax.set_title(k, fontsize=9)
     ax.set_xlabel("")
@@ -174,15 +182,18 @@ fig.savefig(FIG / "boxplots_2019_2024.png")
 plt.close(fig)
 
 # 5c. dispersão 2019 x 2024 (pareado)
-fig, axes = plt.subplots(1, len(CORE), figsize=(3 * len(CORE), 3.4))
-for ax, (k, (a, b, u)) in zip(axes, CORE.items()):
+fig, axes = plt.subplots(2, (len(CORE) + 1) // 2, figsize=(8, 7.6), squeeze=False)
+for ax, (k, (a, b, u)) in zip(axes.ravel(), CORE.items()):
     p = df[[a, b]].dropna()
-    ax.scatter(p[a], p[b], s=8, alpha=.5, color="#4C78A8")
+    ax.scatter(p[a], p[b], s=10, alpha=.45, color=C19, edgecolor="none")
     lim = [0, max(p.max().max(), 1) * 1.02]
-    ax.plot(lim, lim, "k--", lw=.8)
-    ax.set_title(k, fontsize=9)
-    ax.set_xlabel("2019")
-    ax.set_ylabel("2024")
+    ax.plot(lim, lim, color="#5f5e58", ls="--", lw=.8)
+    ax.set_xlim(lim)
+    ax.set_ylim(lim)
+    ax.set_aspect("equal")
+    ax.set_title(f"{k} (n = {len(p)})", fontsize=9)
+    ax.set_xlabel(f"2019 ({u})")
+    ax.set_ylabel(f"2024 ({u})")
 fig.tight_layout()
 fig.savefig(FIG / "dispersao_2019_vs_2024.png")
 plt.close(fig)
