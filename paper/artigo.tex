@@ -36,7 +36,9 @@
   quatro indicadores comparáveis entre os sistemas: atendimento total de água, perdas na
   distribuição, atendimento total de esgoto e tratamento do esgoto coletado. Após a exclusão de
   valores implausíveis, a amostra principal reúne 597 dos 645 municípios com os quatro indicadores
-  nos dois anos. A pesquisa adota abordagem quantitativa, de natureza aplicada e
+  nos dois anos. Resultados preliminares com k-means indicam três perfis, que combinam
+  níveis de acesso às redes e de tratamento do esgoto e se distribuem de forma graduada segundo o
+  porte. A pesquisa adota abordagem quantitativa, de natureza aplicada e
   objetivos exploratórios e descritivos. Serão comparados três algoritmos de clusterização:
   k-means, agrupamento hierárquico de Ward e modelo de mistura gaussiana, com validação por métricas
   internas, concordância entre algoritmos, reamostragem bootstrap e plausibilidade dos perfis.
@@ -51,7 +53,9 @@
   four indicators comparable between the systems were selected: total water service coverage,
   distribution losses, total sewage collection coverage and treatment of collected sewage. After
   excluding implausible values, the main sample comprises 597 of the 645 municipalities with all four
-  indicators in both years. The research adopts a quantitative approach, with
+  indicators in both years. Preliminary k-means results indicate three profiles that combine levels
+  of network access and sewage treatment and are distributed in a graded way across population size
+  classes. The research adopts a quantitative approach, with
   an applied nature and exploratory and descriptive objectives. Three clustering algorithms will be
   compared: k-means, Ward's hierarchical clustering and Gaussian mixture models, validated through
   internal metrics, agreement between algorithms, bootstrap resampling and plausibility checks.
@@ -274,10 +278,42 @@ mistura gaussiana (GMM). Como os rótulos atribuídos pelos algoritmos são arbi
 entre os resultados não é feita pela numeração dos clusters, mas pelas características das variáveis
 que compõem cada agrupamento.
 
-O número de clusters será avaliado por critérios de validação interna, considerando diferentes
-possibilidades de particionamento: Silhueta \cite{rousseeuw1987}, Calinski-Harabasz
-\cite{calinski1974} e Davies-Bouldin \cite{davies1979}, utilizados conjuntamente para avaliar coesão
-e separação dos grupos. A concordância entre as soluções produzidas pelos diferentes algoritmos será
+A definição do número de clusters combina dois métodos. O primeiro é o Método da Silhueta
+\cite{rousseeuw1987}, avaliado em uma grade de valores de $k$ (de 2 a 10). Para cada instância $i$,
+o coeficiente de silhueta é
+\begin{equation}
+  s(i) = \frac{b(i) - a(i)}{\max\{a(i),\, b(i)\}},
+\end{equation}
+em que $a(i)$ é a distância média de $i$ às demais instâncias do seu cluster e $b(i)$ é a menor
+distância média de $i$ às instâncias de outro cluster. O método indica o valor de $k$ que maximiza a
+média de $s(i)$ sobre todas as instâncias.
+
+Outro método amplamente utilizado para determinar o número ideal de clusters é o Método do
+Cotovelo. Conforme \cite{nainggolan2019}, o método envolve a análise da variação do Erro Quadrático
+Total (SSE) com diferentes valores de $k$:
+\begin{equation}
+  \mathrm{SSE}(k) = \sum_{j=1}^{k} \sum_{x \in C_j} \lVert x - \mu_j \rVert^2,
+\end{equation}
+em que $C_j$ é o conjunto de instâncias do cluster $j$ e $\mu_j$ é o seu centroide. O SSE diminui à
+medida que $k$ aumenta; o número adequado de clusters corresponde ao ponto a partir do qual o
+aumento de $k$ deixa de produzir reduções expressivas do SSE, formando um ``cotovelo''. Para evitar
+uma identificação apenas visual, o cotovelo é localizado como o ponto da curva de SSE (de $k = 1$ a
+$k = 10$, com os dois eixos normalizados) mais distante da reta que liga seus extremos.
+
+Os valores indicados pelos dois métodos são tratados como \emph{candidatos}, avaliados por quatro
+critérios: (a)~silhueta média superior a 0,25, limite abaixo do qual não há estrutura substancial
+de grupos \cite{kaufman1990}; (b)~estabilidade, medida pelo ARI médio entre a partição obtida com
+todos os dados e as partições de 100 reamostragens bootstrap de municípios, que deve ser de pelo
+menos 0,85; (c)~menor cluster com pelo menos 5\% das instâncias; e (d)~caráter multivariado: a
+partição não pode ser reproduzida pelo agrupamento de uma única variável (ARI inferior a 0,90 entre
+a partição e o k-means aplicado a cada indicador isoladamente). O critério~(d) evita adotar como
+perfil multivariado uma solução que equivale a classificar os municípios por um só indicador. É
+adotado o maior candidato que atende aos quatro critérios, por oferecer mais detalhe quando mais de
+um é adequado; os demais candidatos são descartados. As métricas de Calinski-Harabasz
+\cite{calinski1974} e Davies-Bouldin \cite{davies1979} complementam a avaliação da coesão e da
+separação dos grupos.
+
+A concordância entre as soluções produzidas pelos diferentes algoritmos será
 avaliada pelo Índice de Rand Ajustado (ARI) \cite{hubert1985}. Adicionalmente, será empregada uma
 rotina de reamostragem bootstrap para verificar a estabilidade dos agrupamentos e uma análise da
 plausibilidade dos perfis, considerando os valores originais das variáveis.
@@ -538,6 +574,87 @@ serviços. A comparação envolve a transição do SNIS para o SINISA, com difer
 definições e nos procedimentos de produção das informações; as diferenças observadas podem refletir
 tanto alterações efetivas nos municípios quanto mudanças metodológicas.
 
+\subsection{Agrupamentos preliminares com k-means}
+\label{sec:agrupamentos}
+
+Como primeiro resultado da etapa de clusterização, o k-means foi aplicado aos 597 municípios nos dois
+anos (1.194 municípios-ano), com padronização robusta ajustada sobre 2019 e 2024 em conjunto e
+transformação logarítmica com winsorização. Essa configuração de pré-processamento ainda é
+provisória. O Método da Silhueta indicou $k = 2$ e o Método do Cotovelo, $k = 3$. A
+Tabela~\ref{tab:candidatos} apresenta a avaliação dos dois candidatos.
+
+\begin{table}[ht]
+\centering
+\caption{Avaliação dos candidatos a número de clusters (k-means, 1.194 municípios-ano).}
+\label{tab:candidatos}
+\small
+\begin{tabular}{lrrrrl}
+\toprule
+Candidato & Silhueta & Estabilidade & Menor cluster & Uma variável & Resultado \\
+ & (a) & (b) & (c) & (d) & \\
+\midrule
+$k = 2$ (Silhueta) & 0,476 & 0,989 & 19,3\% & 0,965 & descartado (d) \\
+$k = 3$ (Cotovelo) & 0,367 & 0,947 & 18,1\% & 0,385 & adotado \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Os dois candidatos atendem aos critérios de estrutura, estabilidade e tamanho mínimo, mas a solução
+com $k = 2$ é quase integralmente reproduzida pelo agrupamento do indicador de tratamento do esgoto
+(ARI de 0,965): ela separa os municípios que tratam praticamente todo o esgoto coletado dos demais.
+Por isso, foi descartada. A solução com $k = 3$ atende aos quatro critérios e foi adotada. Ela
+preserva a separação por tratamento e acrescenta a dimensão de acesso: os municípios que tratam todo
+o esgoto coletado dividem-se em dois grupos segundo o nível de acesso às redes
+(Figura~\ref{fig:perfis} e Tabela~\ref{tab:perfis}).
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=\textwidth]{kmeans_perfis.png}
+\caption{Perfis dos três clusters: mediana (ponto) e intervalo interquartil (barra) de cada
+  indicador, em unidades originais (1.194 municípios-ano).}
+\label{fig:perfis}
+\end{figure}
+
+\begin{table}[ht]
+\centering
+\caption{Perfis dos três clusters: mediana e intervalo interquartil (\%), número de
+  municípios por ano e distribuição por faixa de porte (\% dos municípios-ano de cada faixa).}
+\label{tab:perfis}
+\small
+\setlength{\tabcolsep}{4pt}
+\begin{tabular}{lrrr}
+\toprule
+ & Cluster 1 & Cluster 2 & Cluster 3 \\
+\midrule
+Água          & 86,4 [75,1--91,6] & 99,7 [97,5--100] & 96,8 [89,0--99,7] \\
+Esgoto        & 79,8 [61,8--87,5] & 97,9 [94,9--99,7] & 90,0 [78,7--97,1] \\
+Tratamento    & 100 [100--100]    & 100 [100--100]    & 51,4 [0,0--75,6] \\
+Perdas        & 21,7 [14,7--29,5] & 22,5 [14,5--34,3] & 33,8 [21,8--44,7] \\
+Municípios 2019 / 2024 & 306 / 315 & 176 / 181 & 115 / 101 \\
+\midrule
+Até 20 mil       & 66,5 & 24,2 &  9,3 \\
+20 a 50 mil      & 41,7 & 36,1 & 22,2 \\
+50 a 100 mil     & 32,1 & 36,6 & 31,2 \\
+100 a 250 mil    & 19,3 & 44,3 & 36,4 \\
+Acima de 250 mil &  8,8 & 39,7 & 51,5 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+O cluster~1 reúne municípios que tratam todo o esgoto coletado, mas com acesso intermediário às
+redes de água e de esgoto. O cluster~2 combina acesso quase universal e tratamento total. O
+cluster~3 apresenta bom acesso, porém tratamento parcial ou ausente e perdas maiores. A distribuição
+por porte é graduada: o cluster~1 concentra 66,5\% dos municípios-ano de até 20 mil habitantes e
+apenas 8,8\% dos acima de 250 mil, enquanto o cluster~3 segue o padrão inverso (9,3\% e 51,5\%).
+Entre 2019 e 2024, 429 dos 597 municípios permaneceram no mesmo cluster; os demais se dividem entre
+mudanças em várias direções, como 50 municípios que passaram do cluster~1 para o~2 e 54 que fizeram o
+caminho inverso.
+
+A silhueta média da solução adotada (0,367), assim como a do candidato descartado (0,476),
+situa-se na faixa que \cite{kaufman1990} associam a estrutura fraca, o que indica que os perfis
+devem ser lidos como tendências, e não como grupos nitidamente separados. Esses resultados são preliminares e ainda serão
+comparados com o agrupamento hierárquico de Ward e o modelo de mistura gaussiana.
+
 % =====================================================================================
 \section{Discussão e conclusão}
 
@@ -563,6 +680,14 @@ amostra a 597 municípios. A análise de cenários mostrou que a primeira decis�
 agrupamentos e que a segunda evita, em parte das configurações, a formação de um grupo artificial.
 Permanecem como pontos de atenção o efeito de teto no atendimento de água e, sobretudo, no tratamento
 do esgoto, e as perdas acima de 85\% em 2024.
+
+Os agrupamentos preliminares com k-means reforçam essa leitura. A solução adotada, com três
+perfis, separa os municípios tanto pelo acesso às redes quanto pelo tratamento do esgoto, e o perfil
+de acesso intermediário concentra-se nos municípios menores. Já a solução com dois grupos, preferida
+pela silhueta, equivale praticamente a uma classificação pelo tratamento do esgoto e foi descartada,
+o que mostra a importância de usar critérios adicionais à silhueta na escolha do número de clusters. A estrutura de grupos é,
+contudo, fraca, e os perfis devem ser confirmados com outros algoritmos e configurações de
+pré-processamento.
 
 As próximas etapas consistem na definição final da transformação e da padronização dos indicadores, seguidas
 da aplicação dos métodos k-means, agrupamento hierárquico de Ward e GMM. Os agrupamentos serão

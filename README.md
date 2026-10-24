@@ -12,6 +12,7 @@ python -m src.eda             # etapa 2: análise exploratória -> outputs/
 python -m src.preprocess      # etapa 3: grade de pré-processamento + sensibilidade -> outputs/
 python -m src.clustering      # etapa 4: K-means, k escolhido pelo Método da Silhueta -> outputs/
 python -m src.cenarios        # compara tratamentos de Vinhedo e das perdas zeradas (~2,5 min) -> outputs/
+python -m src.comparar_k      # compara as soluções k = 2 (silhueta) e k = 3 (cotovelo) (~1 min) -> outputs/
 pytest                        # testes
 ```
 
@@ -47,9 +48,10 @@ src/
   build_panel.py       etapa 1 — monta o painel (1 linha por município)
   eda.py               etapa 2 — análise exploratória
   preprocess.py        etapa 3 — pré-processamento parametrizado
-  clustering.py        etapa 4 — K-means + Método da Silhueta (maior silhueta média sobre todas as instâncias)
+  clustering.py        etapa 4 — K-means; k pelo Método da Silhueta, com o Método do Cotovelo como complemento
   cenarios.py          compara cenários de tratamento de Vinhedo (>100%) e das perdas = 0 em 2019
-tests/                 testes do painel, do pré-processamento, da clusterização e dos cenários
+  comparar_k.py        compara soluções com k diferentes (usado na decisão por k = 3)
+tests/                 testes do painel, do pré-processamento, da clusterização, dos cenários e da comparação de k
 paper/
   artigo.tex, referencias.bib   artigo (modelo SBC), revisado para a matriz A4
   figuras/             figuras do artigo (cópias de outputs/figuras/)
@@ -57,6 +59,8 @@ docs/
   decisoes.md          registro de decisões (alimenta a metodologia) ← atualizar a cada decisão
   decisao_vinhedo_perdas.md   justificativa completa do tratamento de Vinhedo e das perdas zeradas
   evidencias/cenarios/ cópia das saídas de src/cenarios.py usadas nessa decisão
+  comparacao_k2_k3.md  comparação entre k = 2 e k = 3 que fundamentou a escolha de k = 3
+  evidencias/comparar_k/ cópia das saídas de src/comparar_k.py
   metodologia_preparacao.md   descrição da etapa de preparação dos dados
   auditoria_etapa1/    auditoria independente do painel e recomendação da matriz
 outputs/               figuras, tabelas e resumos gerados (fora do git)
@@ -94,33 +98,44 @@ Matrizes de sensibilidade: **A3** (A4 sem perdas, a variável de correspondênci
 
 ## Clusterização (`src/clustering.py`)
 
-- **K-means** (n_init = 50, `RANDOM_STATE` = 42) sobre a matriz X do `preprocess.py`. Por padrão usa a
-  configuração `REFERENCIA` (provisória); dá para trocar com `--inclusao`, `--transformacao`,
-  `--escala` e `--escopo`.
-- **Número de clusters pelo Método da Silhueta**: para cada k da grade (padrão 2..10, mude com
-  `--kmin`/`--kmax`), calcula a silhueta média, isto é, a média de s(i) = (b − a) / max(a, b) sobre
-  todas as instâncias. Escolhe o k de maior média; em empate, o menor k.
-- 2019 e 2024 são clusterizados **juntos, no mesmo espaço** (cada município-ano é uma instância),
-  então o cluster de um município é comparável entre os anos. Clusters numerados por tamanho
-  (1 = maior).
-- Saídas:
-  - `outputs/resumo_clustering.md`: curva da silhueta, k escolhido, perfis, cluster × porte e transição
-  - `outputs/tabelas/kmeans_silhueta_por_k.csv`: silhueta média, inércia e menor cluster por k
-  - `outputs/tabelas/kmeans_rotulos.csv`: cluster e s(i) de cada município-ano, com porte e valores originais
-  - `outputs/tabelas/kmeans_perfis.csv`: medianas dos indicadores por cluster
-  - `outputs/tabelas/kmeans_cluster_por_porte.csv`: % de cada faixa de porte em cada cluster, por ano
-  - `outputs/tabelas/kmeans_transicao_2019_2024.csv`: quantos municípios mudaram de cluster
-  - `outputs/figuras/kmeans_silhueta_por_k.png` e `kmeans_silhueta_instancias.png`
-- **Atenção**: o k escolhido depende do pré-processamento (k = 2, 3 ou 4 conforme transformação e
-  escala; ver `docs/decisoes.md`).
+K-means (n_init = 50, `RANDOM_STATE` = 42) sobre a matriz X do `preprocess.py` (configuração
+`REFERENCIA`, com os tratamentos de `config.TRATAMENTOS`). 2019 e 2024 são clusterizados **juntos,
+no mesmo espaço** (cada município-ano é uma instância), então o cluster de um município é comparável
+entre os anos. Os clusters são numerados por tamanho (1 = maior).
 
-## Artigo (`paper/`)
+**Escolha do número de clusters**
 
-Compilar: `cd paper && pdflatex artigo && bibtex artigo && pdflatex artigo && pdflatex artigo`
-(ou subir a pasta no Overleaf). As figuras vêm do `src/eda.py`; se os dados mudarem, rode
-`python -m src.eda` e copie de novo `distribuicoes_2019_2024.png`, `correlacao_spearman_2019_2024.png`
-e `dispersao_2019_vs_2024.png` para `paper/figuras/`. O `sbc.bst` é uma cópia do modelo da SBC com
-"and" trocado por "e" entre autores.
+1. **Candidatos:**
+   - **Método da Silhueta:** k de maior silhueta média, a média de s(i) = (b − a) / max(a, b) sobre
+     todas as instâncias, em k = 2..10.
+   - **Método do Cotovelo** (Nainggolan et al., 2019): curva do Erro Quadrático Total
+     (SSE = `KMeans.inertia_`) de k = 1 a 10. O cotovelo é o ponto da curva normalizada mais distante
+     da reta que liga as pontas.
+2. **Avaliação de cada candidato** (limiares em `config.CRITERIOS_K`):
+   - (a) silhueta > 0,25;
+   - (b) estabilidade bootstrap (ARI médio de 100 reamostragens de municípios) ≥ 0,85;
+   - (c) menor cluster ≥ 5% das instâncias;
+   - (d) não ser reproduzido pelo K-means de uma única variável (ARI < 0,90).
+3. **Escolha:** é adotado o maior candidato que passa nos quatro critérios; os outros ficam só na tabela
+   de avaliação, como descartados. Por decisão do grupo, `CRITERIOS_K["apresentar_complementar"] = False`.
+   Com `True`, o outro candidato admissível seria gerado como "nível geral".
+
+Resultado atual: silhueta → k = 2, cotovelo → k = 3. k = 2 não passa em (d), porque equivale ao
+agrupamento do tratamento do esgoto (ARI 0,965). Assim, **o trabalho usa somente k = 3**.
+Justificativa: `docs/decisoes.md` e `docs/comparacao_k2_k3.md`.
+
+Saídas:
+- `outputs/resumo_clustering.md`: candidatos, avaliação, justificativa da regra, perfis, porte e transição
+- `outputs/tabelas/kmeans_avaliacao_candidatos.csv`: os quatro critérios de cada candidato
+- `outputs/tabelas/kmeans_rotulos.csv`: cluster (k = 3) e silhueta de cada município-ano, com porte e
+  valores originais
+- `outputs/tabelas/kmeans_perfis_k3.csv`, `kmeans_porte_k3.csv`, `kmeans_transicao_k3.csv`
+- `outputs/figuras/`: `kmeans_silhueta_por_k.png`, `kmeans_cotovelo.png`, `kmeans_perfis.png` e
+  `kmeans_silhueta_instancias.png`
+- **Atenção:**
+  - a silhueta de k = 3 (0,37) indica estrutura fraca (Kaufman e Rousseeuw, 1990), então os perfis são
+    tendências, não grupos nitidamente separados;
+  - o resultado também depende do pré-processamento (ver `docs/decisoes.md`).
 
 ## Cenários de tratamento (`src/cenarios.py`)
 

@@ -90,3 +90,19 @@ INDICADORES = MATRIZES[MATRIZ]
 #   perdas_zero: perdas na distribuição = 0% (11 municípios em 2019; 10 na amostra A4)
 #                "manter" | "retirar" (vira ausente -> município sai dos casos completos)
 TRATAMENTOS = {"acima_100": "truncar", "perdas_zero": "retirar"}
+
+# ------------------------------------------------------------------ escolha do número de clusters
+# Regra da opção 3 (decisão do grupo em 2026-10-24; ver docs/decisoes.md e docs/comparacao_k2_k3.md).
+# Candidatos: k da Silhueta e k do Cotovelo. Cada candidato é avaliado por:
+#   silhueta_min       silhueta média > 0,25 (abaixo disso, "sem estrutura substancial" na escala de
+#                      Kaufman e Rousseeuw, 1990)
+#   estabilidade_min   ARI médio do bootstrap (B reamostragens de municípios) >= 0,85
+#   menor_cluster_min  menor cluster com pelo menos 5% das instâncias
+#   univariado_max     a partição NÃO pode ser reproduzida agrupando uma única variável
+#                      (maior ARI entre a partição e o K-means de cada variável sozinha < 0,90)
+# Solução adotada = maior k entre os candidatos que passam em tudo (mais detalhe quando ambos servem).
+# apresentar_complementar: se True, o outro candidato admissível também é apresentado ("nível geral").
+#   Decisão do grupo em 2026-10-24, com base na tabela de avaliação dos candidatos: usar SOMENTE a
+#   solução adotada (k = 3); o outro candidato aparece só na avaliação, como descartado.
+CRITERIOS_K = {"silhueta_min": 0.25, "estabilidade_min": 0.85, "menor_cluster_min": 0.05,
+               "univariado_max": 0.90, "B": 100, "apresentar_complementar": False}
