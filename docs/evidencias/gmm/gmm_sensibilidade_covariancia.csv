@@ -1,0 +1,5 @@
+covariancia,usada,degenerado,BIC,silhueta,ARI × k-means,ARI × Ward,separa por acesso?
+full,False,True,-2914,0.258,0.537,0.508,não
+tied,True,False,7115,0.34,0.39,0.362,não
+diag,False,True,-1957,0.319,0.772,0.594,sim
+spherical,False,False,9165,0.347,0.847,0.58,sim

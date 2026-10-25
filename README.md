@@ -13,6 +13,8 @@ python -m src.preprocess      # etapa 3: grade de pré-processamento + sensibili
 python -m src.clustering      # etapa 4: K-means, k escolhido pelo Método da Silhueta -> outputs/
 python -m src.cenarios        # compara tratamentos de Vinhedo e das perdas zeradas (~2,5 min) -> outputs/
 python -m src.comparar_k      # compara as soluções k = 2 (silhueta) e k = 3 (cotovelo) (~1 min) -> outputs/
+python -m src.ward            # agrupamento hierárquico de Ward + comparação com o k-means (~1 min) -> outputs/
+python -m src.gmm             # modelo de mistura gaussiana + comparação com k-means e Ward (~2 min) -> outputs/
 pytest                        # testes
 ```
 
@@ -51,7 +53,9 @@ src/
   clustering.py        etapa 4 — K-means; k pelo Método da Silhueta, com o Método do Cotovelo como complemento
   cenarios.py          compara cenários de tratamento de Vinhedo (>100%) e das perdas = 0 em 2019
   comparar_k.py        compara soluções com k diferentes (usado na decisão por k = 3)
-tests/                 testes do painel, do pré-processamento, da clusterização, dos cenários e da comparação de k
+  ward.py              agrupamento hierárquico de Ward, mesma regra de k, comparação com o k-means
+  gmm.py               modelo de mistura gaussiana: escolha da covariância, mesma regra de k, comparação
+tests/                 testes do painel, do pré-processamento, da clusterização, dos cenários, da comparação de k, do Ward e do GMM
 paper/
   artigo.tex, referencias.bib   artigo (modelo SBC), revisado para a matriz A4
   figuras/             figuras do artigo (cópias de outputs/figuras/)
@@ -61,6 +65,8 @@ docs/
   evidencias/cenarios/ cópia das saídas de src/cenarios.py usadas nessa decisão
   comparacao_k2_k3.md  comparação entre k = 2 e k = 3 que fundamentou a escolha de k = 3
   evidencias/comparar_k/ cópia das saídas de src/comparar_k.py
+  evidencias/ward/     cópia das saídas de src/ward.py
+  evidencias/gmm/      cópia das saídas de src/gmm.py
   metodologia_preparacao.md   descrição da etapa de preparação dos dados
   auditoria_etapa1/    auditoria independente do painel e recomendação da matriz
 outputs/               figuras, tabelas e resumos gerados (fora do git)
@@ -136,6 +142,42 @@ Saídas:
   - a silhueta de k = 3 (0,37) indica estrutura fraca (Kaufman e Rousseeuw, 1990), então os perfis são
     tendências, não grupos nitidamente separados;
   - o resultado também depende do pré-processamento (ver `docs/decisoes.md`).
+
+## Ward (`src/ward.py`)
+
+Agrupamento hierárquico aglomerativo de Ward (`scipy`, distância euclidiana): junta, passo a passo, os
+dois grupos cuja fusão menos aumenta o SSE, formando uma árvore (dendrograma) que é cortada em k grupos.
+É determinístico, e as partições são aninhadas: o corte em k + 1 divide um dos grupos do corte em k.
+
+- Mesma matriz, pré-processamento, tratamentos, regra de escolha de k e critérios do k-means.
+- Estabilidade: bootstrap de municípios; como o Ward não classifica pontos novos, cada instância
+  original é atribuída ao centroide mais próximo dos grupos da reamostragem.
+- Comparação com o k-means: ARI, tabela de contingência e estabilidade **por cluster** (Jaccard médio;
+  Hennig, 2007), para localizar quais grupos coincidem e quais dependem do algoritmo.
+- Saídas: `outputs/resumo_ward.md`, `outputs/tabelas/ward_*.csv`, `outputs/figuras/ward_dendrograma.png`,
+  `ward_silhueta_por_k.png`, `ward_cotovelo.png` e `ward_vs_kmeans_perfis.png`.
+
+Resultado atual: a regra adota k = 2 no Ward, porque k = 3 é instável (ARI 0,62). Cortado em k = 3, o
+Ward encontra os mesmos três perfis do k-means. O grupo de tratamento parcial é estável nos dois; a
+divisão por acesso, não. Ver `docs/decisoes.md`.
+
+## GMM (`src/gmm.py`)
+
+Modelo de mistura gaussiana (`sklearn.mixture.GaussianMixture`, EM): supõe uma mistura de k normais
+multivariadas e dá a cada município-ano uma probabilidade de pertencer a cada grupo.
+
+- **Covariância:** excluem-se os tipos com componente degenerado (variância < 0,1% da total, ou seja,
+  componente colapsado sobre os valores iguais a 100%). Entre os demais, fica o de menor BIC → `tied`.
+  `full` e `diag` degeneram.
+- **k:** mesma regra do k-means e do Ward. O BIC é registrado, mas não escolhe k, porque cai até k = 10
+  em todos os tipos.
+- **Comparação:** ARI entre os três algoritmos no k = 3, estabilidade por cluster (Jaccard), incerteza de
+  pertença (% com probabilidade máxima < 0,8) e sensibilidade aos quatro tipos de covariância.
+- **Saídas:** `outputs/resumo_gmm.md`, `outputs/tabelas/gmm_*.csv`, `outputs/figuras/gmm_bic.png`,
+  `gmm_silhueta_por_k.png`, `gmm_cotovelo.png` e `tres_algoritmos_perfis.png`.
+
+Resultado atual: com `tied`, o GMM separa os municípios pelo tratamento, mas não pelo acesso (ARI 0,39
+com o k-means). Com `spherical`, reproduz os três perfis (ARI 0,85). Ver `docs/decisoes.md`.
 
 ## Cenários de tratamento (`src/cenarios.py`)
 

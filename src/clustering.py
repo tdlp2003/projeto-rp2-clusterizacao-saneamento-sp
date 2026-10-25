@@ -200,6 +200,16 @@ def escolher_solucoes(avaliacoes: list[dict], k_sil: int) -> tuple[int, int | No
     return principal, complementar, porque
 
 
+def solucao_kmeans(X: pd.DataFrame, ks=range(2, 11), seed: int = RANDOM_STATE) -> tuple[int, pd.Series]:
+    """Aplica a regra completa (candidatos silhueta/cotovelo + critérios) e devolve
+    (k adotado, rótulos 1..k indexados como X). Usado para comparar outros algoritmos com o k-means."""
+    curva = curva_silhueta(X, ks, seed)
+    k_sil, k_cot = escolher_k(curva), k_cotovelo(curva_cotovelo(X, curva))
+    avs = [avaliar_candidato(X, k, CRITERIOS_K, seed) for k in sorted({k_sil, k_cot})]
+    k, _, _ = escolher_solucoes(avs, k_sil)
+    return k, pd.Series(renumerar_por_tamanho(ajustar_kmeans(X, k, seed).labels_), index=X.index)
+
+
 # ------------------------------------------------------------------ figuras
 def _estilo(ax):
     ax.spines[["top", "right"]].set_visible(False)

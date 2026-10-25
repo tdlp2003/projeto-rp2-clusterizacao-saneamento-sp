@@ -1,0 +1,4 @@
+par,ARI
+GMM × k-means (k=3),0.3898
+GMM × Ward (k=3),0.3618
+k-means × Ward (k=3),0.6249

@@ -69,23 +69,25 @@ def corte_univariado(L: pd.DataFrame, lab: pd.Series) -> pd.DataFrame:
 
 
 def cores_alinhadas(labs: dict) -> dict:
-    """Cor de cada cluster em cada k, mantendo a mesma cor para o 'mesmo' grupo entre k consecutivos
-    (o cluster do k maior com maior sobreposição herda a cor do cluster do k menor)."""
-    ks = list(labs)
-    cores = {ks[0]: {c: CORES[c - 1] for c in range(1, ks[0] + 1)}}
-    for k1, k2 in zip(ks, ks[1:]):
-        ct = pd.crosstab(labs[k1], labs[k2])
+    """Cor de cada cluster em cada solução, mantendo a mesma cor para o 'mesmo' grupo entre soluções
+    consecutivas (o cluster da solução seguinte com maior sobreposição herda a cor). As chaves de
+    `labs` podem ser k (int) ou nomes (ex.: "K-means", "Ward"); os rótulos são 1..n."""
+    nomes = list(labs)
+    n0 = labs[nomes[0]].nunique()
+    cores = {nomes[0]: {c: CORES[c - 1] for c in range(1, n0 + 1)}}
+    for a1, a2 in zip(nomes, nomes[1:]):
+        ct = pd.crosstab(np.asarray(labs[a1]), np.asarray(labs[a2]))
         livres, mapa = list(CORES), {}
         for c1 in ct.index:                                   # herdeiro = maior sobreposição
             c2 = ct.loc[c1].idxmax()
             if c2 not in mapa:
-                mapa[c2] = cores[k1][c1]
-        for cor in mapa.values():
-            livres.remove(cor)
-        for c2 in range(1, k2 + 1):
+                mapa[c2] = cores[a1][c1]
+        usadas = set(mapa.values()) | set(cores[a1].values())   # grupo novo nunca herda cor com outro sentido
+        livres = [c for c in livres if c not in usadas]
+        for c2 in range(1, labs[a2].nunique() + 1):
             if c2 not in mapa:
                 mapa[c2] = livres.pop(0)
-        cores[k2] = mapa
+        cores[a2] = mapa
     return cores
 
 
@@ -122,15 +124,16 @@ def transicao(lab: pd.Series) -> pd.DataFrame:
 
 # ------------------------------------------------------------------ figura
 def fig_perfis(L: pd.DataFrame, labs: dict, caminho):
-    """Uma linha por k, uma coluna por indicador: mediana (ponto) e Q1–Q3 (barra) de cada cluster.
-    O mesmo grupo tem a mesma cor nos diferentes k."""
-    ks = list(labs)
+    """Uma linha por solução, uma coluna por indicador: mediana (ponto) e Q1–Q3 (barra) de cada
+    cluster. As chaves de `labs` são k (int) ou nomes de solução; o mesmo grupo tem a mesma cor."""
+    nomes = list(labs)
+    ns = [labs[a].nunique() for a in nomes]
     cor = cores_alinhadas(labs)
-    fig, axes = plt.subplots(len(ks), len(FEATS), figsize=(2.6 * len(FEATS), 1.0 + 0.55 * sum(ks)),
-                             sharex="col", gridspec_kw={"height_ratios": ks})
+    fig, axes = plt.subplots(len(nomes), len(FEATS), figsize=(2.6 * len(FEATS), 1.0 + 0.55 * sum(ns)),
+                             sharex="col", gridspec_kw={"height_ratios": ns})
     axes = np.atleast_2d(axes)
-    for i, k in enumerate(ks):
-        lab = labs[k]
+    for i, (nome, k) in enumerate(zip(nomes, ns)):
+        lab = labs[nome]
         d = L.loc[lab.index, FEATS].assign(cluster=lab.to_numpy())
         for j, f in enumerate(FEATS):
             ax = axes[i, j]
@@ -138,8 +141,8 @@ def fig_perfis(L: pd.DataFrame, labs: dict, caminho):
                 v = d.loc[d.cluster == c, f]
                 q1, med, q3 = v.quantile([.25, .5, .75])
                 y = k - c
-                ax.plot([q1, q3], [y, y], color=cor[k][c], lw=3, solid_capstyle="round", alpha=.55)
-                ax.plot([med], [y], marker="o", ms=8, color=cor[k][c], mec="white", mew=1.5)
+                ax.plot([q1, q3], [y, y], color=cor[nome][c], lw=3, solid_capstyle="round", alpha=.55)
+                ax.plot([med], [y], marker="o", ms=8, color=cor[nome][c], mec="white", mew=1.5)
             ax.set_yticks(range(k))
             ax.set_yticklabels([f"cluster {c} (n={int((d.cluster == c).sum())})" for c in range(k, 0, -1)]
                                if j == 0 else [], fontsize=8)
@@ -149,11 +152,11 @@ def fig_perfis(L: pd.DataFrame, labs: dict, caminho):
             ax.tick_params(colors=TEXTO_2, labelsize=8, left=False)
             if i == 0:
                 ax.set_title(INDICADORES[f].rotulo, fontsize=9, color=TEXTO)
-            if i == len(ks) - 1:
+            if i == len(nomes) - 1:
                 ax.set_xlabel("%", fontsize=8, color=TEXTO_2)
-        if len(ks) > 1:
-            axes[i, 0].annotate(f"k = {k}", xy=(-0.95, 0.5), xycoords="axes fraction", fontsize=10,
-                                color=TEXTO, fontweight="bold", va="center")
+        if len(nomes) > 1:
+            rot = f"k = {nome}" if isinstance(nome, (int, np.integer)) else str(nome)
+            axes[i, 0].set_ylabel(rot, fontsize=10, color=TEXTO, fontweight="bold", labelpad=8)
     fig.tight_layout()
     fig.savefig(caminho, dpi=150, bbox_inches="tight")
     plt.close(fig)

@@ -1,0 +1,4 @@
+cluster k-means,Jaccard k-means,Jaccard Ward,Jaccard GMM,% incerta GMM
+1,0.973,0.76,0.726,0.0
+2,0.947,0.683,sem correspondente,sem correspondente
+3,0.983,0.897,0.698,3.2

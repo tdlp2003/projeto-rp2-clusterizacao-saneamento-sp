@@ -38,7 +38,9 @@
   valores implausíveis, a amostra principal reúne 597 dos 645 municípios com os quatro indicadores
   nos dois anos. Resultados preliminares com k-means indicam três perfis, que combinam
   níveis de acesso às redes e de tratamento do esgoto e se distribuem de forma graduada segundo o
-  porte. A pesquisa adota abordagem quantitativa, de natureza aplicada e
+  porte. O agrupamento hierárquico de Ward reproduz os três perfis e confirma a robustez do grupo
+  definido pelo tratamento do esgoto, mas indica que a divisão por nível de acesso corresponde a um
+  gradiente, e não a grupos nitidamente separados. A pesquisa adota abordagem quantitativa, de natureza aplicada e
   objetivos exploratórios e descritivos. Serão comparados três algoritmos de clusterização:
   k-means, agrupamento hierárquico de Ward e modelo de mistura gaussiana, com validação por métricas
   internas, concordância entre algoritmos, reamostragem bootstrap e plausibilidade dos perfis.
@@ -55,7 +57,9 @@
   excluding implausible values, the main sample comprises 597 of the 645 municipalities with all four
   indicators in both years. Preliminary k-means results indicate three profiles that combine levels
   of network access and sewage treatment and are distributed in a graded way across population size
-  classes. The research adopts a quantitative approach, with
+  classes. Ward's hierarchical clustering reproduces the three profiles and confirms the robustness
+  of the group defined by sewage treatment, but indicates that the split by access level reflects a
+  gradient rather than clearly separated groups. The research adopts a quantitative approach, with
   an applied nature and exploratory and descriptive objectives. Three clustering algorithms will be
   compared: k-means, Ward's hierarchical clustering and Gaussian mixture models, validated through
   internal metrics, agreement between algorithms, bootstrap resampling and plausibility checks.
@@ -313,10 +317,19 @@ um é adequado; os demais candidatos são descartados. As métricas de Calinski-
 \cite{calinski1974} e Davies-Bouldin \cite{davies1979} complementam a avaliação da coesão e da
 separação dos grupos.
 
-A concordância entre as soluções produzidas pelos diferentes algoritmos será
-avaliada pelo Índice de Rand Ajustado (ARI) \cite{hubert1985}. Adicionalmente, será empregada uma
-rotina de reamostragem bootstrap para verificar a estabilidade dos agrupamentos e uma análise da
-plausibilidade dos perfis, considerando os valores originais das variáveis.
+O agrupamento hierárquico de Ward parte de uma instância por grupo e, a cada passo, une os dois
+grupos cuja fusão produz o menor aumento do SSE, formando uma árvore (dendrograma) que é cortada no
+número de clusters desejado \cite{ward1963}. As partições obtidas são aninhadas: o corte em $k + 1$
+grupos divide um dos grupos do corte em $k$. O Ward é submetido à mesma regra de escolha do número de
+clusters. Como ele não classifica novas observações, a estabilidade bootstrap é calculada atribuindo
+cada instância ao centroide mais próximo dos grupos obtidos em cada reamostragem.
+
+A concordância entre as soluções produzidas pelos diferentes algoritmos, com o mesmo número de
+clusters, é avaliada pelo Índice de Rand Ajustado (ARI) \cite{hubert1985}. Para identificar quais
+grupos se mantêm, calcula-se também a estabilidade de cada cluster pelo índice de Jaccard médio entre
+o cluster original e o cluster mais semelhante de cada reamostragem \cite{hennig2007}; valores acima
+de 0,75 indicam grupos estáveis, e valores entre 0,6 e 0,75, padrões com pertença incerta. Por fim,
+avalia-se a plausibilidade dos perfis, considerando os valores originais das variáveis.
 
 \subsection{Correspondência entre agrupamentos e porte}
 
@@ -652,8 +665,56 @@ caminho inverso.
 
 A silhueta média da solução adotada (0,367), assim como a do candidato descartado (0,476),
 situa-se na faixa que \cite{kaufman1990} associam a estrutura fraca, o que indica que os perfis
-devem ser lidos como tendências, e não como grupos nitidamente separados. Esses resultados são preliminares e ainda serão
-comparados com o agrupamento hierárquico de Ward e o modelo de mistura gaussiana.
+devem ser lidos como tendências, e não como grupos nitidamente separados.
+
+\subsection{Comparação com o agrupamento hierárquico de Ward}
+\label{sec:ward}
+
+Aplicado aos mesmos dados, o Ward indicou os mesmos candidatos: $k = 2$ pela silhueta (0,461) e
+$k = 3$ pelo cotovelo. Isoladamente, a regra de escolha adotaria $k = 2$ no Ward, pois a solução com
+três grupos não atingiu a estabilidade mínima (ARI médio de 0,62 nas reamostragens). O dendrograma
+(Figura~\ref{fig:dendrograma}) mostra a estrutura hierárquica: a primeira divisão separa o grupo de
+tratamento parcial, e a segunda divide os demais municípios.
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=0.85\textwidth]{ward_dendrograma.png}
+\caption{Dendrograma do agrupamento de Ward (últimas 30 fusões), com os cortes em $k = 3$ (solução
+  adotada) e $k = 2$ (indicado pela regra aplicada apenas ao Ward).}
+\label{fig:dendrograma}
+\end{figure}
+
+Cortado em três grupos, o Ward reproduz os mesmos três perfis do k-means: acesso intermediário com
+tratamento total (490 municípios-ano), acesso quase universal com tratamento total (457) e
+tratamento parcial (247). A concordância entre as duas partições é moderada (ARI de 0,625). A
+Tabela~\ref{tab:jaccard} mostra onde os algoritmos coincidem e onde divergem. O grupo de tratamento
+parcial é estável nos dois algoritmos, e os 216 municípios-ano desse grupo no k-means também estão no
+grupo correspondente do Ward. Já a divisão entre acesso intermediário e acesso universal é estável no
+k-means, mas não no Ward, que desloca 122 municípios-ano do primeiro para o segundo grupo.
+
+\begin{table}[ht]
+\centering
+\caption{Estabilidade por cluster (índice de Jaccard médio em 100 reamostragens bootstrap) no
+  k-means e no Ward, com $k = 3$.}
+\label{tab:jaccard}
+\small
+\begin{tabular}{lrr}
+\toprule
+Perfil & k-means & Ward \\
+\midrule
+Acesso intermediário, tratamento total & 0,973 & 0,760 \\
+Acesso quase universal, tratamento total & 0,947 & 0,683 \\
+Tratamento parcial ou ausente          & 0,983 & 0,897 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Esses resultados indicam que a separação pelo tratamento do esgoto corresponde a um grupo robusto,
+identificado por algoritmos com estratégias diferentes, enquanto o nível de acesso às redes varia de
+forma contínua, sem uma quebra natural nos dados. A solução com três perfis foi mantida, mas a divisão
+entre os grupos de acesso intermediário e de acesso universal deve ser interpretada como uma
+separação em faixas de um gradiente, cuja fronteira depende do algoritmo, e não como uma distinção
+entre grupos naturais. A comparação com o modelo de mistura gaussiana completará essa avaliação.
 
 % =====================================================================================
 \section{Discussão e conclusão}
@@ -685,12 +746,18 @@ Os agrupamentos preliminares com k-means reforçam essa leitura. A solução ado
 perfis, separa os municípios tanto pelo acesso às redes quanto pelo tratamento do esgoto, e o perfil
 de acesso intermediário concentra-se nos municípios menores. Já a solução com dois grupos, preferida
 pela silhueta, equivale praticamente a uma classificação pelo tratamento do esgoto e foi descartada,
-o que mostra a importância de usar critérios adicionais à silhueta na escolha do número de clusters. A estrutura de grupos é,
-contudo, fraca, e os perfis devem ser confirmados com outros algoritmos e configurações de
-pré-processamento.
+o que mostra a importância de usar critérios adicionais à silhueta na escolha do número de clusters.
 
-As próximas etapas consistem na definição final da transformação e da padronização dos indicadores, seguidas
-da aplicação dos métodos k-means, agrupamento hierárquico de Ward e GMM. Os agrupamentos serão
+A comparação com o Ward qualifica esse resultado. Os mesmos três perfis aparecem nos dois
+algoritmos, e o grupo de tratamento parcial é estável em ambos, o que reforça a importância do
+tratamento do esgoto como dimensão que distingue os municípios. A divisão por nível de acesso, por
+outro lado, depende do algoritmo, e a estrutura geral de grupos é fraca. Por isso, os perfis de
+acesso são interpretados como faixas de um gradiente, o que também deve ser considerado na leitura da
+relação com o porte. Os resultados ainda devem ser confirmados com o modelo de mistura gaussiana e com
+outras configurações de pré-processamento.
+
+As próximas etapas consistem na definição final da transformação e da padronização dos indicadores e
+na aplicação do modelo de mistura gaussiana. Os agrupamentos serão
 avaliados quanto à qualidade e à estabilidade e caracterizados quanto ao porte populacional. Por
 fim, os perfis de 2019 e 2024 serão comparados, considerando as limitações de comparabilidade entre
 SNIS e SINISA.

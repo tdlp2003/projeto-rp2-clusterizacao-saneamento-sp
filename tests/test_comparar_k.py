@@ -22,3 +22,10 @@ def test_cores_alinhadas_mantem_cor_do_grupo_que_continua():
     k3 = pd.Series([1, 1, 2, 2, 3, 3])          # cluster 1 de k=2 se divide; o 2 vira o 3
     c = cores_alinhadas({2: k2, 3: k3})
     assert c[3][3] == c[2][2] and c[3][1] == c[2][1] and c[3][2] not in c[2].values()
+
+
+def test_grupo_novo_nao_reusa_cor_de_grupo_que_sumiu():
+    a = pd.Series([1, 1, 2, 2, 3, 3])            # 3 grupos
+    b = pd.Series([1, 1, 1, 1, 2, 3])            # grupos 1 e 2 de "a" se juntam; o 3 se divide
+    c = cores_alinhadas({"a": a, "b": b})
+    assert c["b"][3] not in c["a"].values()
